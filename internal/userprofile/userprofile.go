@@ -1,4 +1,4 @@
-package user
+package userprofile
 
 import (
 	"time"
@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type User struct {
+type UserProfile struct {
 	ID          uuid.UUID  `json:"id"`
 	Email       string     `json:"email"`
 	FirstName   string     `json:"firstName"`
