@@ -5,6 +5,9 @@ version: '3'
 vars:
   COMPOSE_FILE: _dev/db_compose.yml
 
+includes:
+  mig: ./_taskfiles/migration.yml
+
 tasks:
   default:
     cmds:

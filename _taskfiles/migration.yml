@@ -1,0 +1,17 @@
+version: '3'
+
+vars:
+  GO_COMMAND: go
+  MIGRATE_COMMAND: github.com/golang-migrate/migrate/v4/cmd/migrate
+
+tasks:
+  create:
+    desc: "Create migration file. Usage: task migration:create -- <name>"
+    dir: ./migration
+    requires:
+      vars: [ name ]
+    vars:
+      name: "{{.name}}"
+    cmds:
+      - |
+        {{.GO_COMMAND}} run {{.MIGRATE_COMMAND}} create -ext sql -dir . -seq {{.name}}
