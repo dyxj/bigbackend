@@ -11,3 +11,4 @@ services:
       - POSTGRES_PASSWORD=postgrespw
     volumes:
       - ./bigbackend-database/:/var/lib/postgresql/data/
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
