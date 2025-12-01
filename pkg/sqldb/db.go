@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -17,11 +19,11 @@ const (
 
 // NewDBConn creates a new database connection pool
 func NewDBConn(ctx context.Context, cfg Config, opts ...Option) (*sql.DB, error) {
-	var connectionString = fmt.Sprintf(
-		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		cfg.Host(), cfg.Port(), cfg.User(), cfg.Password(), cfg.DBName())
 
-	db, err := sql.Open(_driverName, connectionString)
+	db, err := sql.Open(
+		_driverName,
+		buildConnectionString(cfg),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -41,4 +43,10 @@ func NewDBConn(ctx context.Context, cfg Config, opts ...Option) (*sql.DB, error)
 	}
 
 	return db, nil
+}
+
+func buildConnectionString(cfg Config) string {
+	return fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		cfg.Host(), cfg.Port(), cfg.User(), cfg.Password(), cfg.DBName())
 }
