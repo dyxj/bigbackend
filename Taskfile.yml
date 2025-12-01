@@ -3,10 +3,19 @@
 version: '3'
 
 vars:
-  GREETING: Hello, World!
+  COMPOSE_FILE: _dev/db_compose.yml
 
 tasks:
   default:
     cmds:
-      - echo "{{.GREETING}}"
-    silent: true
+      - task -l
+
+  up:
+    desc: spin up database
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} up -d
+
+  down:
+    desc: shut down database and remove orphans
+    cmds:
+      - docker compose -f ${{.COMPOSE_FILE}} down --remove-orphans
