@@ -18,4 +18,4 @@ tasks:
   down:
     desc: shut down database and remove orphans
     cmds:
-      - docker compose -f ${{.COMPOSE_FILE}} down --remove-orphans
+      - docker compose -p bigbackend down --remove-orphans
