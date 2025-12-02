@@ -7,15 +7,27 @@ import (
 	// their requested CPU.
 
 	"context"
+	"errors"
 	"log"
+	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/dyxj/bigbackend/internal/config"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/sqldb"
-	_ "go.uber.org/automaxprocs"
+	"go.uber.org/automaxprocs/maxprocs"
 )
+
+func init() {
+	// Set default logger to stdout
+	log.SetOutput(os.Stdout)
+
+	_, err := maxprocs.Set(maxprocs.Logger(log.Printf))
+	if err != nil {
+		log.Panicf("failed to set GOMAXPROCS: %v", err)
+	}
+}
 
 func main() {
 	// listen to interrupt and termination signals
@@ -40,7 +52,11 @@ func main() {
 	defer func() {
 		err := logger.Sync()
 		if err != nil {
-			log.Println(err)
+			// Will need to dig into details "sync /dev/stdout: bad file descriptor"
+			if errors.Is(err, syscall.EBADF) {
+				return
+			}
+			log.Printf("failed to perform log sync: %v", err)
 		}
 	}()
 
@@ -52,7 +68,7 @@ func main() {
 	defer func() {
 		err := dbConn.Close()
 		if err != nil {
-			log.Println(err)
+			log.Printf("failed to close db conn: %v", err)
 		}
 	}()
 
