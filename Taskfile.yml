@@ -8,6 +8,7 @@ vars:
 includes:
   mig: ./_taskfiles/migration.yml
   sqlgen: ./_taskfiles/sqlgen.yml
+  map: ./_taskfiles/map.yml
 
 tasks:
   default:

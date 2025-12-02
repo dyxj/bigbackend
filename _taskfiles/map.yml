@@ -1,0 +1,17 @@
+version: '3'
+
+vars:
+  GO_COMMAND: go
+
+tasks:
+  help:
+    desc: Get current go version
+    cmds:
+      - |
+        {{.GO_COMMAND}} run github.com/jmattheis/goverter/cmd/goverter --help
+
+  gen:
+    desc: Generate converters
+    cmds:
+      - |
+        {{.GO_COMMAND}} run github.com/jmattheis/goverter/cmd/goverter gen ./...
