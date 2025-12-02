@@ -8,6 +8,7 @@
 package model
 
 import (
+	"cloud.google.com/go/civil"
 	"github.com/google/uuid"
 	"time"
 )
@@ -17,7 +18,7 @@ type UserProfile struct {
 	Email       string
 	FirstName   string
 	LastName    string
-	DateOfBirth time.Time
+	DateOfBirth civil.Date
 	CreateTime  time.Time
 	UpdateTime  time.Time
 }

@@ -2,27 +2,10 @@ version: '3'
 
 vars:
   GO_COMMAND: go
-  JET_COMMAND: github.com/go-jet/jet/v2/cmd/jet
-  GEN_PATH: ./internal/sqlgen
 
 tasks:
-  jet:
-    desc: run jet from module
-    cmds:
-      - |
-        {{.GO_COMMAND}} run {{.JET_COMMAND}}
-
   gen:
-    desc: generate from local database
-    vars:
-      DB_USER: postgres
-      DB_PASSWORD: postgrespw
-      DB_PORT: 5430
-      DB_NAME: user_profile_local
+    desc: "Run go-jet generator to create SQL builder code"
     cmds:
       - |
-        {{.GO_COMMAND}} run {{.JET_COMMAND}} \
-        -dsn=postgresql://{{.DB_USER}}:{{.DB_PASSWORD}}@localhost:{{.DB_PORT}}/{{.DB_NAME}}?sslmode=disable \
-        -ignore-tables=schema_migrations \
-        -schema=public \
-        -path={{.GEN_PATH}}
+        {{.GO_COMMAND}} run ./_dev/sqlgen/generator.go

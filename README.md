@@ -21,7 +21,11 @@ Migration scripts are executed automatically on application start up.
 
 ## Plan
 - [x] Setup logger
+- [x] Generate model and sql builders
+- [x] Custom struct with go-jet, ie: shop-spring decimal or date for example
 - [] Database get and create
+- [] Mapper
+- [] Integrate db query and handler
 - [] Http server
 - [] Replace mock config with real config, extracting from env vars
-- [] Custom struct with go-jet, ie: shop-spring decimal
+- [] Improve quality of sql gen generated code

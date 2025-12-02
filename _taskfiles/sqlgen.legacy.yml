@@ -1,0 +1,28 @@
+version: '3'
+
+vars:
+  GO_COMMAND: go
+  JET_COMMAND: github.com/go-jet/jet/v2/cmd/jet
+  GEN_PATH: ./internal/sqlgen
+
+tasks:
+  jet:
+    desc: Run jet from module. Legacy as an example
+    cmds:
+      - |
+        {{.GO_COMMAND}} run {{.JET_COMMAND}}
+
+  gen-old:
+    desc: Generate from local database. Legacy as an example
+    vars:
+      DB_USER: postgres
+      DB_PASSWORD: postgrespw
+      DB_PORT: 5430
+      DB_NAME: user_profile_local
+    cmds:
+      - |
+        {{.GO_COMMAND}} run {{.JET_COMMAND}} \
+        -dsn=postgresql://{{.DB_USER}}:{{.DB_PASSWORD}}@localhost:{{.DB_PORT}}/{{.DB_NAME}}?sslmode=disable \
+        -ignore-tables=schema_migrations \
+        -schema=public \
+        -path={{.GEN_PATH}}
