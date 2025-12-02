@@ -12,6 +12,7 @@ import (
 	"syscall"
 
 	"github.com/dyxj/bigbackend/internal/config"
+	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/sqldb"
 	_ "go.uber.org/automaxprocs"
 )
@@ -28,15 +29,25 @@ func main() {
 	// Parse environment variables
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		panic(err)
+		log.Panicf("failed to load config: %v", err)
 	}
 
 	// Initialize logger
+	logger, err := logx.InitLogger()
+	if err != nil {
+		log.Panicf("failed to init logger: %v", err)
+	}
+	defer func() {
+		err := logger.Sync()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
 
 	// Initialize database connection
 	dbConn, err := sqldb.NewDBConn(mainCtx, cfg.DBConfig)
 	if err != nil {
-		panic(err)
+		log.Panicf("failed to connect to database: %v", err)
 	}
 	defer func() {
 		err := dbConn.Close()
@@ -48,6 +59,6 @@ func main() {
 	// Run database migrations
 	err = sqldb.RunMigration(dbConn, nil)
 	if err != nil {
-		panic(err)
+		log.Panicf("failed to run database migrations: %v", err)
 	}
 }
