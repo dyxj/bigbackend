@@ -6,7 +6,7 @@ vars:
 
 tasks:
   create:
-    desc: "Create migration file. Usage: task migration:create -- <name>"
+    desc: "Create migration file. Usage: task mig:create name=<name>"
     dir: ./migration
     requires:
       vars: [ name ]
