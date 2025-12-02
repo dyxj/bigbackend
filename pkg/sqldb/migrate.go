@@ -2,6 +2,7 @@ package sqldb
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -26,5 +27,13 @@ func RunMigration(db *sql.DB, migrationFileUrl *string) error {
 		return err
 	}
 
-	return m.Migrate(_currentMigrationVersion)
+	err = m.Migrate(_currentMigrationVersion)
+	if err != nil {
+		if errors.Is(err, migrate.ErrNoChange) {
+			return nil
+		}
+		return err
+	}
+
+	return nil
 }
