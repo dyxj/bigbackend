@@ -5,7 +5,7 @@
 // and will be lost if the code is regenerated
 //
 
-package model
+package entity
 
 import (
 	"cloud.google.com/go/civil"

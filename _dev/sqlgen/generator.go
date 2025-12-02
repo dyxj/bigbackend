@@ -48,6 +48,7 @@ func main() {
 					).
 					// Generate models
 					UseModel(template.DefaultModel().
+						UsePath("/entity").
 						UseTable(func(table metadata.Table) template.TableModel {
 
 							_, ok := skipTableName[table.Name]
