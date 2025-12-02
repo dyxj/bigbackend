@@ -10,6 +10,14 @@ type HTTPServerConfig struct {
 	port int
 }
 
+func (c *HTTPServerConfig) Host() string {
+	return c.host
+}
+
+func (c *HTTPServerConfig) Port() int {
+	return c.port
+}
+
 type DBConfig struct {
 	host     string
 	port     int
