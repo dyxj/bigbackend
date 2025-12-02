@@ -1,7 +1,7 @@
 package mapx
 
 import (
-	"github.com/dyxj/bigbackend/internal/sqlgen/user_profile_local/public/entity"
+	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/entity"
 	"github.com/dyxj/bigbackend/internal/userprofile"
 )
 

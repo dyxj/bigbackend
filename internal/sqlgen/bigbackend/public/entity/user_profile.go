@@ -21,4 +21,5 @@ type UserProfile struct {
 	DateOfBirth civil.Date
 	CreateTime  time.Time
 	UpdateTime  time.Time
+	Version     int32
 }

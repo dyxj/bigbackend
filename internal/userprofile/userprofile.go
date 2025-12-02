@@ -15,4 +15,5 @@ type UserProfile struct {
 	DateOfBirth civil.Date `json:"dateOfBirth"`
 	CreateTime  time.Time  `json:"createTime"`
 	UpdateTime  time.Time  `json:"updateTime"`
+	Version     int32      `json:"version"`
 }

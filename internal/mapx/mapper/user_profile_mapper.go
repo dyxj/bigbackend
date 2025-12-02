@@ -5,7 +5,7 @@ package mapper
 
 import (
 	mapx "github.com/dyxj/bigbackend/internal/mapx"
-	entity "github.com/dyxj/bigbackend/internal/sqlgen/user_profile_local/public/entity"
+	entity "github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/entity"
 	userprofile "github.com/dyxj/bigbackend/internal/userprofile"
 )
 
@@ -20,5 +20,6 @@ func (c *UserProfile) ModelToEntity(source userprofile.UserProfile) entity.UserP
 	entityUserProfile.DateOfBirth = mapx.MapDate(source.DateOfBirth)
 	entityUserProfile.CreateTime = mapx.MapTime(source.CreateTime)
 	entityUserProfile.UpdateTime = mapx.MapTime(source.UpdateTime)
+	entityUserProfile.Version = source.Version
 	return entityUserProfile
 }

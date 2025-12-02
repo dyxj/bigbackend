@@ -25,7 +25,7 @@ func main() {
 			Port:       5430,
 			User:       "postgres",
 			Password:   "postgrespw",
-			DBName:     "user_profile_local",
+			DBName:     "bigbackend",
 			SchemaName: "public",
 			SslMode:    "disable",
 		},

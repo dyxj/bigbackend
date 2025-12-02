@@ -24,6 +24,7 @@ type userProfileTable struct {
 	DateOfBirth postgres.ColumnDate
 	CreateTime  postgres.ColumnTimestampz
 	UpdateTime  postgres.ColumnTimestampz
+	Version     postgres.ColumnInteger
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -71,8 +72,9 @@ func newUserProfileTableImpl(schemaName, tableName, alias string) userProfileTab
 		DateOfBirthColumn = postgres.DateColumn("date_of_birth")
 		CreateTimeColumn  = postgres.TimestampzColumn("create_time")
 		UpdateTimeColumn  = postgres.TimestampzColumn("update_time")
-		allColumns        = postgres.ColumnList{IDColumn, EmailColumn, FirstNameColumn, LastNameColumn, DateOfBirthColumn, CreateTimeColumn, UpdateTimeColumn}
-		mutableColumns    = postgres.ColumnList{EmailColumn, FirstNameColumn, LastNameColumn, DateOfBirthColumn, CreateTimeColumn, UpdateTimeColumn}
+		VersionColumn     = postgres.IntegerColumn("version")
+		allColumns        = postgres.ColumnList{IDColumn, EmailColumn, FirstNameColumn, LastNameColumn, DateOfBirthColumn, CreateTimeColumn, UpdateTimeColumn, VersionColumn}
+		mutableColumns    = postgres.ColumnList{EmailColumn, FirstNameColumn, LastNameColumn, DateOfBirthColumn, CreateTimeColumn, UpdateTimeColumn, VersionColumn}
 	)
 
 	return userProfileTable{
@@ -86,6 +88,7 @@ func newUserProfileTableImpl(schemaName, tableName, alias string) userProfileTab
 		DateOfBirth: DateOfBirthColumn,
 		CreateTime:  CreateTimeColumn,
 		UpdateTime:  UpdateTimeColumn,
+		Version:     VersionColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

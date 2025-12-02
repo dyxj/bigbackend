@@ -46,9 +46,9 @@ func LoadConfig() (*Config, error) {
 	dbConfig := &DBConfig{
 		host:     "localhost",
 		port:     5430,
-		user:     "user_profile_role",
+		user:     "bigbackend_role",
 		password: "postgrespw",
-		dbName:   "user_profile_local",
+		dbName:   "bigbackend",
 	}
 	return &Config{
 		HTTPServerConfig: httpConfig,
