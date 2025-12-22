@@ -19,6 +19,7 @@ import (
 
 	"github.com/dyxj/bigbackend/internal/config"
 	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/sqldb"
 	"go.uber.org/automaxprocs/maxprocs"
@@ -136,10 +137,9 @@ func setupHTTPServer(ctx context.Context, serverConfig *config.HTTPServerConfig,
 	server := &http.Server{
 		Addr:              fmt.Sprintf("%v:%v", serverConfig.Host(), serverConfig.Port()),
 		ReadHeaderTimeout: 500 * time.Millisecond,
-		ReadTimeout:       500 * time.Second,
+		ReadTimeout:       500 * time.Millisecond,
 		IdleTimeout:       time.Second,
-		// TODO better error body
-		Handler: http.TimeoutHandler(router, time.Second, ""),
+		Handler:           http.TimeoutHandler(router, time.Second, httpx.TimeoutResponseBody),
 		BaseContext: func(_ net.Listener) context.Context {
 			return ongoingCtx
 		},
