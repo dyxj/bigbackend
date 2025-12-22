@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"reflect"
+	"strings"
 
 	"cloud.google.com/go/civil"
 	"github.com/go-jet/jet/v2/generator/metadata"
@@ -62,10 +64,10 @@ func main() {
 								UseField(func(column metadata.Column) template.TableModelField {
 									defaultTableModelField := template.DefaultTableModelField(column)
 
-									if schema.Name == "public" &&
-										table.Name == "user_profile" &&
-										column.Name == "date_of_birth" {
-										defaultTableModelField.Type = template.NewType(civil.Date{})
+									goType, found := getGoTypeOverride(column)
+									if found {
+										defaultTableModelField.Type = template.NewType(goType)
+										return defaultTableModelField
 									}
 
 									return defaultTableModelField
@@ -80,4 +82,26 @@ func main() {
 		return
 	}
 	return
+}
+
+func getGoTypeOverride(column metadata.Column) (any, bool) {
+	defaultGoType, found := toGoTypeOverride(column)
+	if !found {
+		return nil, false
+	}
+
+	if column.IsNullable {
+		return reflect.New(reflect.TypeOf(defaultGoType)).Interface(), true
+	}
+
+	return defaultGoType, true
+}
+
+func toGoTypeOverride(column metadata.Column) (any, bool) {
+	switch strings.ToLower(column.Name) {
+	case "date_of_birth":
+		return civil.Date{}, true
+	default:
+		return nil, false
+	}
 }
