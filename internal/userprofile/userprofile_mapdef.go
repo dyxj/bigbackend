@@ -5,7 +5,7 @@ import (
 )
 
 // goverter:converter
-// goverter:output:file ./user_profile_mapper.go
+// goverter:output:file ./userprofile_mapper.go
 // goverter:name UserProfileMapper
 // goverter:extend github.com/dyxj/bigbackend/pkg/mapx:MapTime
 // goverter:extend github.com/dyxj/bigbackend/pkg/mapx:MapDate
