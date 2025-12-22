@@ -15,3 +15,9 @@ tasks:
     cmds:
       - |
         {{.GO_COMMAND}} run {{.MIGRATE_COMMAND}} create -ext sql -dir . -seq {{.name}}
+
+  run:
+    desc: "Run migrations according to _currentMigrationVersion"
+    cmds:
+      - |
+        {{.GO_COMMAND}} run ./_dev/migration/run.go
