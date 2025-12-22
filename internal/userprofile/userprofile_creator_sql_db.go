@@ -15,7 +15,7 @@ type CreatorSQLDB struct {
 	logger *zap.Logger
 }
 
-func NewCreatorRepo(logger *zap.Logger) *CreatorSQLDB {
+func NewCreatorSQLDB(logger *zap.Logger) *CreatorSQLDB {
 	return &CreatorSQLDB{
 		logger: logger,
 	}
