@@ -15,7 +15,7 @@ import (
 
 type UserProfile struct {
 	ID          uuid.UUID `sql:"primary_key"`
-	Email       string
+	UserID      uuid.UUID
 	FirstName   string
 	LastName    string
 	DateOfBirth civil.Date

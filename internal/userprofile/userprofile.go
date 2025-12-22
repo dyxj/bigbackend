@@ -10,7 +10,7 @@ import (
 
 type UserProfile struct {
 	ID          uuid.UUID  `json:"id"`
-	Email       string     `json:"email"`
+	UserID      uuid.UUID  `json:"userId"`
 	FirstName   string     `json:"firstName"`
 	LastName    string     `json:"lastName"`
 	DateOfBirth civil.Date `json:"dateOfBirth"`

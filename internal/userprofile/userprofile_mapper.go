@@ -13,7 +13,7 @@ type UserProfileMapper struct{}
 func (c *UserProfileMapper) EntityToModel(source entity.UserProfile) UserProfile {
 	var userprofileUserProfile UserProfile
 	userprofileUserProfile.ID = mapx.MapUUID(source.ID)
-	userprofileUserProfile.Email = source.Email
+	userprofileUserProfile.UserID = mapx.MapUUID(source.UserID)
 	userprofileUserProfile.FirstName = source.FirstName
 	userprofileUserProfile.LastName = source.LastName
 	userprofileUserProfile.DateOfBirth = mapx.MapDate(source.DateOfBirth)
@@ -25,7 +25,7 @@ func (c *UserProfileMapper) EntityToModel(source entity.UserProfile) UserProfile
 func (c *UserProfileMapper) ModelToEntity(source UserProfile) entity.UserProfile {
 	var entityUserProfile entity.UserProfile
 	entityUserProfile.ID = mapx.MapUUID(source.ID)
-	entityUserProfile.Email = source.Email
+	entityUserProfile.UserID = mapx.MapUUID(source.UserID)
 	entityUserProfile.FirstName = source.FirstName
 	entityUserProfile.LastName = source.LastName
 	entityUserProfile.DateOfBirth = mapx.MapDate(source.DateOfBirth)
