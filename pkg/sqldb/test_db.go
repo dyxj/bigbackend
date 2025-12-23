@@ -5,7 +5,10 @@ package sqldb
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"log"
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -48,7 +51,14 @@ func SetupTestDB(t *testing.T) *sql.DB {
 		log.Panicf("failed to ping testcontainer database: %v", err)
 	}
 
-	err = RunMigration(dbConn, nil)
+	projectRoot, err := getProjectRoot()
+	if err != nil {
+		t.Fatalf("failed to find project root: %v", err)
+	}
+	migrationPath := filepath.Join(projectRoot, "migration")
+	migrationURL := "file://" + migrationPath
+
+	err = RunMigration(dbConn, &migrationURL)
 	if err != nil {
 		log.Panicf("failed to run database migrations: %v", err)
 	}
@@ -84,5 +94,24 @@ func teardownTestDB(db *postgres.PostgresContainer) {
 	log.Println("teardown test db")
 	if err := testcontainers.TerminateContainer(db); err != nil {
 		log.Printf("failed to terminate container: %s", err)
+	}
+}
+
+func getProjectRoot() (string, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
+			return dir, nil
+		}
+
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return "", errors.New("go.mod not found in any parent directory")
+		}
+		dir = parent
 	}
 }
