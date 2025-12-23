@@ -1,6 +1,7 @@
 package userprofile
 
 import (
+	"strings"
 	"time"
 
 	"cloud.google.com/go/civil"
@@ -17,6 +18,28 @@ type UserProfile struct {
 	CreateTime  time.Time  `json:"createTime"`
 	UpdateTime  time.Time  `json:"updateTime"`
 	Version     int32      `json:"version"`
+}
+
+func (u *UserProfile) Sanitize() {
+	u.FirstName = strings.Trim(u.FirstName, " ")
+	u.LastName = strings.Trim(u.LastName, " ")
+}
+
+func (u *UserProfile) IsValidForCreate() bool {
+	return u.isValid()
+}
+
+func (u *UserProfile) IsValidForUpdate() bool {
+	return u.isValid() &&
+		u.ID != uuid.Nil
+}
+
+func (u *UserProfile) isValid() bool {
+	return u.FirstName != "" &&
+		u.LastName != "" &&
+		u.DateOfBirth.IsValid() &&
+		!u.DateOfBirth.IsZero() &&
+		u.DateOfBirth.Before(civil.DateOf(time.Now()))
 }
 
 // userProfileAuditableEntity adapts entity.UserProfile to repo.Auditable.
