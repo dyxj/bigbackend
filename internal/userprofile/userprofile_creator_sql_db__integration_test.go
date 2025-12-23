@@ -16,10 +16,10 @@ import (
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/entity"
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/table"
 	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/sqldb"
 	"github.com/go-jet/jet/v2/postgres"
-	"github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -131,11 +131,12 @@ func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
 			input2,
 		)
 
-		var pqErr *pq.Error
-		isExpectedError := assert.ErrorAs(t, err, &pqErr, "expected pq.Error type")
+		var uErr *errorx.UniqueViolationError
+		isExpectedError := assert.ErrorAs(t, err, &uErr, "expected errorx.UniqueViolationError")
 		if isExpectedError {
-			assert.Equal(t, "23505", string(pqErr.Code), "expected unique_violation error code")
-			assert.Equal(t, fmt.Sprintf("Key (user_id)=(%s) already exists.", input2.UserID), pqErr.Detail, "expected unique violation detail")
+			assert.Equal(t, fmt.Sprintf("unique violation error: userId:%s", input2.UserID), uErr.Error(), "expected unique violation error message")
+			//assert.Equal(t, "23505", string(uErr.Code), "expected unique_violation error code")
+			//assert.Equal(t, fmt.Sprintf("Key (user_id)=(%s) already exists.", input2.UserID), pqErr.Detail, "expected unique violation detail")
 		}
 	})
 }
