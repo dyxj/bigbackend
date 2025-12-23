@@ -12,8 +12,8 @@ import (
 	"github.com/dyxj/bigbackend/internal/userprofile"
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/logx"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"gotest.tools/v3/assert"
 )
 
 // Test that
@@ -53,8 +53,8 @@ func TestCreator_CreateUserProfileTx_Successfully(t *testing.T) {
 	result, err := creator.CreateUserProfileTx(context.Background(), &sql.Tx{}, input)
 
 	mockRepo.AssertNumberOfCalls(t, "InsertUserProfile", 1)
-	assert.NilError(t, err)
-	assert.DeepEqual(t, inputSanitized, result)
+	assert.NoError(t, err)
+	assert.EqualValues(t, inputSanitized, result)
 }
 
 func TestCreator_CreateUserProfileTx_ValidationError(t *testing.T) {
@@ -116,7 +116,36 @@ func TestCreator_CreateUserProfileTx_ValidationError(t *testing.T) {
 			_, err = creator.CreateUserProfileTx(context.Background(), nil, input)
 
 			mockRepo.AssertNumberOfCalls(t, "InsertUserProfile", 0)
-			assert.ErrorType(t, err, &errorx.ValidationError{})
+			var expectedErr *errorx.ValidationError
+			assert.ErrorAs(t, err, &expectedErr)
 		})
 	}
+}
+
+func TestCreator_CreateUserProfileTx_InsertUserProfileError(t *testing.T) {
+	logger, err := logx.InitLogger()
+	if err != nil {
+		t.Fatalf("failed to initialize logger: %v", err)
+	}
+
+	mockRepo := new(mockCreatorRepo)
+	mockRepo.
+		On("InsertUserProfile", mock.Anything, mock.Anything, mock.Anything).
+		Return(entity.UserProfile{}, &errorx.UniqueViolationError{}).
+		Once()
+
+	creator := userprofile.NewCreator(
+		logger,
+		mockRepo,
+		&userprofile.UserProfileMapper{},
+	)
+
+	input := faker.UserProfile()
+
+	result, err := creator.CreateUserProfileTx(context.Background(), &sql.Tx{}, input)
+
+	mockRepo.AssertNumberOfCalls(t, "InsertUserProfile", 1)
+	var expectedErr *errorx.UniqueViolationError
+	assert.ErrorAs(t, err, &expectedErr)
+	assert.EqualValues(t, userprofile.UserProfile{}, result)
 }
