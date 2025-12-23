@@ -28,6 +28,7 @@ func (c *CreatorSQLDB) InsertUserProfile(
 	tx sqldb.Executable,
 	input entity.UserProfile,
 ) (entity.UserProfile, error) {
+	c.logger.Debug("inserting user profile", zap.Any("userId", input.UserID))
 
 	inputAuditable := userProfileAuditableEntity{P: &input}
 	audit.InitInsertFields(inputAuditable)
@@ -38,6 +39,8 @@ func (c *CreatorSQLDB) InsertUserProfile(
 	if err != nil {
 		return entity.UserProfile{}, err
 	}
+
+	c.logger.Debug("inserted user profile", zap.Any("userId", input.UserID))
 
 	return input, nil
 }
