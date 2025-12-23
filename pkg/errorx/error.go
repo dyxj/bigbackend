@@ -6,6 +6,8 @@ import (
 
 const validationErrorPrefix = "validation error"
 const uniqueViolationErrorPrefix = "unique violation error"
+const errSeparator = " | "
+const keyValueSeparator = ":"
 
 type ValidationError struct {
 	Properties map[string]string
@@ -30,11 +32,10 @@ func writeErrorWithProperties(prefix string, properties map[string]string) strin
 
 	sb := strings.Builder{}
 	sb.WriteString(prefix)
-	sb.WriteString(":")
 	for k, v := range properties {
-		sb.WriteString(" ")
+		sb.WriteString(errSeparator)
 		sb.WriteString(k)
-		sb.WriteString(":")
+		sb.WriteString(keyValueSeparator)
 		sb.WriteString(v)
 	}
 	return sb.String()
