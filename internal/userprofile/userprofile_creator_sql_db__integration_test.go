@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"testing"
 	"time"
 
@@ -24,11 +23,6 @@ import (
 )
 
 func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
-	getwd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("failed to get working directory: %v", err)
-	}
-	fmt.Println(getwd)
 	logger, err := logx.InitLogger()
 	if err != nil {
 		t.Fatalf("failed to initialize logger: %v", err)
@@ -134,9 +128,7 @@ func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
 		var uErr *errorx.UniqueViolationError
 		isExpectedError := assert.ErrorAs(t, err, &uErr, "expected errorx.UniqueViolationError")
 		if isExpectedError {
-			assert.Equal(t, fmt.Sprintf("unique violation error: userId:%s", input2.UserID), uErr.Error(), "expected unique violation error message")
-			//assert.Equal(t, "23505", string(uErr.Code), "expected unique_violation error code")
-			//assert.Equal(t, fmt.Sprintf("Key (user_id)=(%s) already exists.", input2.UserID), pqErr.Detail, "expected unique violation detail")
+			assert.Equal(t, fmt.Sprintf("unique violation error | userId:%s", input2.UserID), uErr.Error(), "expected unique violation error message")
 		}
 	})
 }
