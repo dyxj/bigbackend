@@ -25,6 +25,8 @@ func NewCreator(logger *zap.Logger, creatorRepo CreatorRepo, mapper Mapper) Crea
 
 func (c *creator) CreateUserProfileTx(ctx context.Context, tx sqldb.Executable, input UserProfile) (UserProfile, error) {
 
+	input.Sanitize()
+
 	isValid := input.IsValidForCreate()
 	if !isValid {
 		return UserProfile{}, &errorx.ValidationError{}
@@ -35,6 +37,7 @@ func (c *creator) CreateUserProfileTx(ctx context.Context, tx sqldb.Executable, 
 	if err != nil {
 		return UserProfile{}, err
 	}
+
 	return c.mapper.EntityToModel(createdEntity), nil
 }
 
