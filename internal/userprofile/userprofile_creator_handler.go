@@ -24,8 +24,13 @@ type CreatorHandler struct {
 	mapper  Mapper
 }
 
-func NewCreatorHandler(logger *zap.Logger, tm sqldb.TransactionManager, creator Creator) *CreatorHandler {
-	return &CreatorHandler{logger: logger, tm: tm, creator: creator}
+func NewCreatorHandler(
+	logger *zap.Logger,
+	tm sqldb.TransactionManager,
+	creator Creator,
+	mapper Mapper,
+) *CreatorHandler {
+	return &CreatorHandler{logger: logger, tm: tm, creator: creator, mapper: mapper}
 }
 
 func (c *CreatorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +45,16 @@ func (c *CreatorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	vErr := cRequest.Validate()
 	if vErr != nil {
 		c.logger.Warn("create user profile request validation failed", zap.Any("userId", cRequest.UserID))
-		httpx.ValidationFailedResponse(*vErr, w)
+		httpx.ValidationFailedResponse(vErr, w)
+		return
+	}
+
+	userId := r.PathValue("id")
+	if userId != cRequest.UserID.String() {
+		c.logger.Warn("user ID in URL does not match user ID in request body",
+			zap.String("urlUserId", userId),
+			zap.String("bodyUserId", cRequest.UserID.String()))
+		httpx.BadRequestResponse("user ID in URL does not match user ID in request body", w)
 		return
 	}
 
@@ -87,7 +101,7 @@ func (c *CreatorHandler) resolveError(err error, w http.ResponseWriter) {
 	var vErr *errorx.ValidationError
 	if errors.As(err, &vErr) {
 		c.logger.Warn("failed to insert user profile due to validation error", zap.Error(vErr))
-		httpx.ValidationFailedResponse(*vErr, w)
+		httpx.ValidationFailedResponse(vErr, w)
 		return
 
 	}

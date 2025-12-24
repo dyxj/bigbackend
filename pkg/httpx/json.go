@@ -36,11 +36,13 @@ func JsonResponse(statusCode int, resp any, w http.ResponseWriter) {
 func BadRequestResponse(message string, w http.ResponseWriter) {
 	JsonResponse(
 		http.StatusBadRequest,
-		message,
+		ErrorResponse{
+			Message: message,
+		},
 		w)
 }
 
-func ValidationFailedResponse(validationFailure errorx.ValidationError, w http.ResponseWriter) {
+func ValidationFailedResponse(validationFailure *errorx.ValidationError, w http.ResponseWriter) {
 	JsonResponse(
 		http.StatusBadRequest,
 		ErrorResponse{

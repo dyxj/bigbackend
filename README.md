@@ -57,6 +57,9 @@ Checkout `Taskfile.yml` on how to generate mappers.
   - [ ] updater
   - [ ] deleter
 - [ ] Http server
+  - [ ] Extract to standalone server instead of main
+  - [ ] Switch to chi router
+  - [ ] Add middleware, crash recovery, tracing
 - [ ] Graceful shutdown (Done, but it's ugly improve it before marking as done)
 - [ ] Replace mock config with real config, extracting from env vars
 - [ ] More descriptive validator, self implement or maybe explore go-playground/validator

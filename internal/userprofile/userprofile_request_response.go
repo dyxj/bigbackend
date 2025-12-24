@@ -19,16 +19,16 @@ func (r *CreateRequest) Validate() *errorx.ValidationError {
 	errors := make(map[string]string)
 
 	if r.UserID == uuid.Nil {
-		errors["userId"] = "userId is required"
+		errors["userId"] = "is required"
 	}
 	if r.FirstName == "" {
-		errors["firstName"] = "firstName is required"
+		errors["firstName"] = "is required"
 	}
 	if r.LastName == "" {
-		errors["lastName"] = "lastName is required"
+		errors["lastName"] = "is required"
 	}
 	if !r.DateOfBirth.IsValid() || r.DateOfBirth.IsZero() || !r.DateOfBirth.Before(civil.DateOf(time.Now())) {
-		errors["dateOfBirth"] = "dateOfBirth is invalid"
+		errors["dateOfBirth"] = "is invalid or in the future"
 	}
 
 	if len(errors) > 0 {

@@ -7,10 +7,10 @@ import (
 	// their requested CPU.
 
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -19,7 +19,6 @@ import (
 
 	"github.com/dyxj/bigbackend/internal/config"
 	"github.com/dyxj/bigbackend/internal/userprofile"
-	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/sqldb"
 	"go.uber.org/automaxprocs/maxprocs"
@@ -91,7 +90,7 @@ func main() {
 		log.Panicf("failed to run database migrations: %v", err)
 	}
 
-	server, serverForceStop := setupHTTPServer(mainCtx, cfg.HTTPServerConfig, logger)
+	server, serverForceStop := setupHTTPServer(mainCtx, cfg.HTTPServerConfig, logger, dbConn)
 
 	go func() {
 		logger.Info("starting server")
@@ -125,25 +124,45 @@ func main() {
 	logger.Info("server shut down gracefully")
 }
 
-func setupHTTPServer(ctx context.Context, serverConfig *config.HTTPServerConfig, logger *zap.Logger) (*http.Server, context.CancelFunc) {
+func setupHTTPServer(
+	ctx context.Context,
+	serverConfig *config.HTTPServerConfig,
+	logger *zap.Logger,
+	dbConn *sql.DB,
+) (*http.Server, context.CancelFunc) {
 
 	userProfileGetterHandler := userprofile.NewGetterHandler(logger)
+	userProfileCreatorHandler := initUserProfileHandler(logger, dbConn)
 
 	router := http.NewServeMux()
 
 	router.HandleFunc("GET /user/{id}", userProfileGetterHandler.ServeHTTP)
+	router.HandleFunc("POST /user/{id}/profile", userProfileCreatorHandler.ServeHTTP)
 
-	ongoingCtx, forceStopOngoingCtx := context.WithCancel(ctx)
+	//ongoingCtx, forceStopOngoingCtx := context.WithCancel(ctx)
+	//server := &http.Server{
+	//	Addr:              fmt.Sprintf("%v:%v", serverConfig.Host(), serverConfig.Port()),
+	//	ReadHeaderTimeout: 5000 * time.Millisecond,
+	//	ReadTimeout:       5000 * time.Millisecond,
+	//	IdleTimeout:       time.Second,
+	//	Handler:           http.TimeoutHandler(router, 5*time.Second, httpx.TimeoutResponseBody),
+	//	BaseContext: func(_ net.Listener) context.Context {
+	//		return ongoingCtx
+	//	},
+	//}
+
+	_, forceStopOngoingCtx := context.WithCancel(ctx)
 	server := &http.Server{
-		Addr:              fmt.Sprintf("%v:%v", serverConfig.Host(), serverConfig.Port()),
-		ReadHeaderTimeout: 500 * time.Millisecond,
-		ReadTimeout:       500 * time.Millisecond,
-		IdleTimeout:       time.Second,
-		Handler:           http.TimeoutHandler(router, time.Second, httpx.TimeoutResponseBody),
-		BaseContext: func(_ net.Listener) context.Context {
-			return ongoingCtx
-		},
+		Addr:    fmt.Sprintf("%v:%v", serverConfig.Host(), serverConfig.Port()),
+		Handler: router,
 	}
 
 	return server, forceStopOngoingCtx
+}
+
+func initUserProfileHandler(logger *zap.Logger, dbConn *sql.DB) *userprofile.CreatorHandler {
+	mapper := &userprofile.UserProfileMapper{}
+	repo := userprofile.NewCreatorSQLDB(logger)
+	creator := userprofile.NewCreator(logger, repo, mapper)
+	return userprofile.NewCreatorHandler(logger, dbConn, creator, mapper)
 }
