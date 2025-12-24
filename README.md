@@ -51,6 +51,11 @@ Checkout `Taskfile.yml` on how to generate mappers.
 - [x] Database get and create
 - [x] Mapper
 - [ ] Integrate db query, domain and handler, test and validation
+  - [ ] creator
+  - [ ] add deletedAt nullable
+  - [ ] getter
+  - [ ] updater
+  - [ ] deleter
 - [ ] Http server
 - [ ] Graceful shutdown (Done, but it's ugly improve it before marking as done)
 - [ ] Replace mock config with real config, extracting from env vars

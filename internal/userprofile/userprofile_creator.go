@@ -9,10 +9,6 @@ import (
 	"go.uber.org/zap"
 )
 
-type Creator interface {
-	CreateUserProfileTx(ctx context.Context, tx sqldb.Executable, input UserProfile) (UserProfile, error)
-}
-
 type creator struct {
 	logger      *zap.Logger
 	creatorRepo CreatorRepo

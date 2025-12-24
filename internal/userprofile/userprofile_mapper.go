@@ -10,6 +10,14 @@ import (
 
 type UserProfileMapper struct{}
 
+func (c *UserProfileMapper) CreateRequestToModel(source CreateRequest) UserProfile {
+	var userprofileUserProfile UserProfile
+	userprofileUserProfile.UserID = mapx.MapUUID(source.UserID)
+	userprofileUserProfile.FirstName = source.FirstName
+	userprofileUserProfile.LastName = source.LastName
+	userprofileUserProfile.DateOfBirth = mapx.MapDate(source.DateOfBirth)
+	return userprofileUserProfile
+}
 func (c *UserProfileMapper) EntityToModel(source entity.UserProfile) UserProfile {
 	var userprofileUserProfile UserProfile
 	userprofileUserProfile.ID = mapx.MapUUID(source.ID)
@@ -33,4 +41,16 @@ func (c *UserProfileMapper) ModelToEntity(source UserProfile) entity.UserProfile
 	entityUserProfile.UpdateTime = mapx.MapTime(source.UpdateTime)
 	entityUserProfile.Version = source.Version
 	return entityUserProfile
+}
+func (c *UserProfileMapper) ModelToResponse(source UserProfile) Response {
+	var userprofileResponse Response
+	userprofileResponse.ID = mapx.MapUUID(source.ID)
+	userprofileResponse.UserID = mapx.MapUUID(source.UserID)
+	userprofileResponse.FirstName = source.FirstName
+	userprofileResponse.LastName = source.LastName
+	userprofileResponse.DateOfBirth = mapx.MapDate(source.DateOfBirth)
+	userprofileResponse.CreateTime = mapx.MapTime(source.CreateTime)
+	userprofileResponse.UpdateTime = mapx.MapTime(source.UpdateTime)
+	userprofileResponse.Version = source.Version
+	return userprofileResponse
 }

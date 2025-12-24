@@ -58,10 +58,6 @@ func (c *CreatorSQLDB) resolveError(err error, input entity.UserProfile) error {
 	var pqErr *pq.Error
 	isPqErr := errors.As(err, &pqErr)
 	if isPqErr && sqldb.IsUniqueViolationError(pqErr) {
-		c.logger.Warn("failed to insert user profile due to unique key violation",
-			zap.Any("userId", input.UserID),
-			zap.String("detail", pqErr.Detail),
-		)
 		return &errorx.UniqueViolationError{
 			Properties: map[string]string{"userId": input.UserID.String()},
 		}

@@ -13,4 +13,7 @@ import (
 type Mapper interface {
 	ModelToEntity(source UserProfile) entity.UserProfile
 	EntityToModel(source entity.UserProfile) UserProfile
+	// goverter:ignoreMissing
+	CreateRequestToModel(source CreateRequest) UserProfile
+	ModelToResponse(source UserProfile) Response
 }
