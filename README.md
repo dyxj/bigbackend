@@ -47,7 +47,10 @@ Ensure migrations are always wrapped with a transaction.
 #### Running migration scripts
 Migration scripts are executed automatically on application start up.
 `_currentMigrationVersion` in `pkg/sqldb/migrate.go` determines the migration scripts to run.  
-It can also be run manually using `Taskfile.yml` commands, which is useful when generating sql models and builders. 
+It can also be run manually using `Taskfile.yml` commands, which is useful when generating sql models and builders.  
+
+Automatic migration should be used with caution and consider scenarios where multiple pods are configured. Ensure 
+appropriate techniques are employed to handle these scenarios.
 
 ### Database SQL Builder
 Database SQL builder uses [go-jet/jet](https://github.com/go-jet/jet).  
