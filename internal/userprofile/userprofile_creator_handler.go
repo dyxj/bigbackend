@@ -38,7 +38,9 @@ func (c *CreatorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&cRequest)
 	if err != nil {
 		c.logger.Warn("failed to decode create user profile request", zap.Error(err))
-		httpx.BadRequestResponse("invalid request body", w)
+		httpx.BadRequestResponse("invalid request body",
+			map[string]string{"error": err.Error()},
+			w)
 		return
 	}
 
@@ -54,7 +56,7 @@ func (c *CreatorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		c.logger.Warn("user ID in URL does not match user ID in request body",
 			zap.String("urlUserId", userId),
 			zap.String("bodyUserId", cRequest.UserID.String()))
-		httpx.BadRequestResponse("user ID in URL does not match user ID in request body", w)
+		httpx.BadRequestResponse("user ID in URL does not match user ID in request body", nil, w)
 		return
 	}
 
@@ -95,7 +97,7 @@ func (c *CreatorHandler) resolveError(err error, w http.ResponseWriter) {
 	var uErr *errorx.UniqueViolationError
 	if errors.As(err, &uErr) {
 		c.logger.Warn("failed to insert user profile due to unique key violation", zap.Error(uErr))
-		httpx.BadRequestResponse("user profile already exists", w)
+		httpx.BadRequestResponse("user profile already exists", nil, w)
 		return
 	}
 	var vErr *errorx.ValidationError

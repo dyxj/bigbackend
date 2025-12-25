@@ -33,11 +33,12 @@ func JsonResponse(statusCode int, resp any, w http.ResponseWriter) {
 	_, _ = w.Write(buf.Bytes())
 }
 
-func BadRequestResponse(message string, w http.ResponseWriter) {
+func BadRequestResponse(message string, details map[string]string, w http.ResponseWriter) {
 	JsonResponse(
 		http.StatusBadRequest,
 		ErrorResponse{
 			Message: message,
+			Details: details,
 		},
 		w)
 }
