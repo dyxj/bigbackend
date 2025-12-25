@@ -1,11 +1,26 @@
 # Big Backend
 
 Backend services built with my current preferences.  
-Mainly a repo for me to refer to things I forget over time.
+Mainly a repo for me to refer to things I forget over time.  
+
+## Notes
+It should be noted, not all projects require such levels of abstractions and layers, just covering all scenarios.  
+The intent is also to cover microservices scenarios, but it's one repo for simplicity.  
+Eventually the project will consist of
+- user account
+  - id of this domain will be used as userId throughout other services
+- user activation
+- user profile
+- notification service(mainly for emails)
 
 ## Dev Tools
+- Docker and docker compose, should come together with Docker Desktop
+- [Taskfile](https://taskfile.dev/)
+  - As it is heavily used for development, installing it with autocompletion is recommended.
+
 ### Task
-https://taskfile.dev/ is used as a helper tool to run common dev commands.
+`Taskfile.yml` is the main task file.  
+Sub task file can be found in `_taskfiles` folder.
 ```terminaloutput
 ➜  bigbackend git:(main) task
 task: [default] task -l
@@ -18,8 +33,6 @@ task: Available tasks for this project:
 * mig:run:          Run migrations according to _currentMigrationVersion
 * sqlgen:gen:       Run go-jet generator to create SQL builder code
 ```
-`Taskfile.yml` is the main task file.  
-Sub task file can be found in `_taskfiles` folder.
 
 ## Database
 PostgreSQL is used as the main database. Check out `Taskfile.yml` on how to spin up local database.
@@ -52,7 +65,8 @@ Checkout `Taskfile.yml` on how to generate mappers.
 - [x] Mapper
 - [ ] Integrate db query, domain and handler, test and validation
   - [ ] creator
-  - [ ] add deletedAt nullable
+    - Test handler, consider testing on mux instead of just handler to ensure routing works
+  - [ ] add deletedAt nullable, don't forget indexing
   - [ ] getter
   - [ ] updater
   - [ ] deleter
@@ -60,11 +74,20 @@ Checkout `Taskfile.yml` on how to generate mappers.
   - [ ] Extract to standalone server instead of main
   - [ ] Switch to chi router
   - [ ] Add middleware, crash recovery, tracing
-- [ ] Graceful shutdown (Done, but it's ugly improve it before marking as done)
+- [x] Graceful shutdown (Done, but it's ugly improve it before marking as done)
 - [ ] Replace mock config with real config, extracting from env vars
-- [ ] More descriptive validator, self implement or maybe explore go-playground/validator
 - [ ] Implement inbox and outbox pattern
+  - [ ] Consider watermill
+- [ ] Scheduled job orchestration
+- [ ] More descriptive validator, self implement or maybe explore go-playground/validator
 - [ ] Increase test coverage
-- [ ] Rename database
 - [ ] Improve quality of `_dev/sqlgen/generator.go`
 - [ ] Automate generation of Auditable methods on entities
+- [ ] Taskfile improvements
+  - [ ] Move DB up and down sub command
+  - [ ] Add run commands
+  - [ ] Add test commands customized with build tags
+    - not as urgent as currently use Goland to run
+- [ ] User activation
+- [ ] User account(auth)
+- [ ] Revise plantUML, completely forgot syntax
