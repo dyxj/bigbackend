@@ -47,7 +47,7 @@ Ensure migrations are always wrapped with a transaction.
 #### Running migration scripts
 Migration scripts are executed automatically on application start up.
 `_currentMigrationVersion` in `pkg/sqldb/migrate.go` determines the migration scripts to run.  
-It can also be run manually using `Taskfile.yml` commands, which is useful when for generating sql models and builders. 
+It can also be run manually using `Taskfile.yml` commands, which is useful when generating sql models and builders. 
 
 ### Database SQL Builder
 Database SQL builder uses [go-jet/jet](https://github.com/go-jet/jet).  
@@ -55,7 +55,8 @@ Check out `Taskfile.yml` on how to generate models and sql builders.
 
 ## Mapper
 [goverter](https://github.com/jmattheis/goverter) is used to generate mappers between different layers.  
-Checkout `Taskfile.yml` on how to generate mappers.
+Checkout `Taskfile.yml` on how to generate mappers.  
+Examples can be found in `[domain]_mapdef.go` files, resulting generated file is `[domain]_mapper.go`.
 
 ## Plan
 - [x] Setup logger
@@ -71,7 +72,7 @@ Checkout `Taskfile.yml` on how to generate mappers.
   - [ ] updater
   - [ ] deleter
 - [ ] Http server
-  - [ ] Extract to standalone server instead of main
+  - [x] Extract to standalone server instead of main
   - [ ] Switch to chi router
   - [ ] Add middleware, crash recovery, tracing
 - [x] Graceful shutdown (Done, but it's ugly improve it before marking as done)
