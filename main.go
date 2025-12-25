@@ -7,22 +7,18 @@ import (
 	// their requested CPU.
 
 	"context"
-	"database/sql"
 	"errors"
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/dyxj/bigbackend/internal/app"
 	"github.com/dyxj/bigbackend/internal/config"
-	"github.com/dyxj/bigbackend/internal/userprofile"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/sqldb"
 	"go.uber.org/automaxprocs/maxprocs"
-	"go.uber.org/zap"
 )
 
 func init() {
@@ -46,9 +42,6 @@ func main() {
 	mainCtx, mainStop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	// ensures stop function is called on exit to avoid unintended diversion of signals to context
 	defer mainStop()
-
-	// used to terminate program in case of initialization failures
-	errSign := make(chan struct{})
 
 	// Parse environment variables
 	cfg, err := config.LoadConfig()
@@ -90,79 +83,21 @@ func main() {
 		log.Panicf("failed to run database migrations: %v", err)
 	}
 
-	server, serverForceStop := setupHTTPServer(mainCtx, cfg.HTTPServerConfig, logger, dbConn)
+	server := app.NewServer(
+		logger,
+		dbConn,
+		cfg.HTTPServerConfig,
+	)
 
-	go func() {
-		logger.Info("starting server")
-		err := server.ListenAndServe()
-		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			logger.Error("server stopped", zap.Error(err))
-			errSign <- struct{}{}
-		}
-		logger.Info("server stopped")
-	}()
+	errSig := server.Run()
 
 	select {
-	case <-errSign:
-		logger.Error("unexpected error occurred while starting up server")
 	case <-mainCtx.Done():
+	case <-errSig:
+		logger.Error("unexpected error occurred while starting up httpServer")
 	}
 	mainStop()
+	serverStopDone := server.Stop()
 
-	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), _shutdownPeriod)
-	defer shutdownCancel()
-
-	err = server.Shutdown(shutdownCtx)
-	serverForceStop()
-	if err != nil {
-		logger.Error("Failed to wait for ongoing requests to finish, waiting for forced cancellation")
-		time.Sleep(_shutdownHardPeriod)
-		logger.Error("server shut down ungracefully")
-		return
-	}
-
-	logger.Info("server shut down gracefully")
-}
-
-func setupHTTPServer(
-	ctx context.Context,
-	serverConfig *config.HTTPServerConfig,
-	logger *zap.Logger,
-	dbConn *sql.DB,
-) (*http.Server, context.CancelFunc) {
-
-	userProfileGetterHandler := userprofile.NewGetterHandler(logger)
-	userProfileCreatorHandler := initUserProfileHandler(logger, dbConn)
-
-	router := http.NewServeMux()
-
-	router.HandleFunc("GET /user/{id}", userProfileGetterHandler.ServeHTTP)
-	router.HandleFunc("POST /user/{id}/profile", userProfileCreatorHandler.ServeHTTP)
-
-	//ongoingCtx, forceStopOngoingCtx := context.WithCancel(ctx)
-	//server := &http.Server{
-	//	Addr:              fmt.Sprintf("%v:%v", serverConfig.Host(), serverConfig.Port()),
-	//	ReadHeaderTimeout: 5000 * time.Millisecond,
-	//	ReadTimeout:       5000 * time.Millisecond,
-	//	IdleTimeout:       time.Second,
-	//	Handler:           http.TimeoutHandler(router, 5*time.Second, httpx.TimeoutResponseBody),
-	//	BaseContext: func(_ net.Listener) context.Context {
-	//		return ongoingCtx
-	//	},
-	//}
-
-	_, forceStopOngoingCtx := context.WithCancel(ctx)
-	server := &http.Server{
-		Addr:    fmt.Sprintf("%v:%v", serverConfig.Host(), serverConfig.Port()),
-		Handler: router,
-	}
-
-	return server, forceStopOngoingCtx
-}
-
-func initUserProfileHandler(logger *zap.Logger, dbConn *sql.DB) *userprofile.CreatorHandler {
-	mapper := &userprofile.UserProfileMapper{}
-	repo := userprofile.NewCreatorSQLDB(logger)
-	creator := userprofile.NewCreator(logger, repo, mapper)
-	return userprofile.NewCreatorHandler(logger, dbConn, creator, mapper)
+	<-serverStopDone
 }
