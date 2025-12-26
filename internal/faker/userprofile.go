@@ -33,3 +33,12 @@ func UserProfileEntity() entity.UserProfile {
 		Version:     0,
 	}
 }
+
+func UserProfileCreateRequest() userprofile.CreateRequest {
+	return userprofile.CreateRequest{
+		UserID:      uuid.New(),
+		FirstName:   gofakeit.FirstName(),
+		LastName:    gofakeit.LastName(),
+		DateOfBirth: civil.DateOf(pastDate()),
+	}
+}
