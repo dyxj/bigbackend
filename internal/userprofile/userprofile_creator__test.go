@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"cloud.google.com/go/civil"
-	"github.com/dyxj/bigbackend/internal/faker"
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/entity"
 	"github.com/dyxj/bigbackend/internal/userprofile"
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/logx"
+	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

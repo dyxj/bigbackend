@@ -52,7 +52,7 @@ func (s *Server) initServer() {
 
 	s.onGoingCtx, s.stopOngoingGracefully = context.WithCancel(context.Background())
 
-	router := s.buildRouter()
+	router := s.BuildRouter()
 
 	if s.httpConfig.IsDebug() {
 		s.httpServer = &http.Server{

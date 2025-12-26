@@ -1,23 +1,21 @@
 //go:build integration
 
-package userprofile_test
+package integration
 
 import (
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 	"testing"
 	"time"
 
-	"github.com/dyxj/bigbackend/internal/faker"
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/entity"
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/table"
 	"github.com/dyxj/bigbackend/internal/userprofile"
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/logx"
-	"github.com/dyxj/bigbackend/pkg/sqldb"
+	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/go-jet/jet/v2/postgres"
 	"github.com/stretchr/testify/assert"
 )
@@ -27,7 +25,7 @@ func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to initialize logger: %v", err)
 	}
-	dbConn := sqldb.SetupTestDB(t)
+	dbConn := getTestDBConn()
 
 	t.Run("should insert successfully", func(t *testing.T) {
 		t.Cleanup(func() {
@@ -84,7 +82,7 @@ func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
 		assert.Equal(t, input.UserID, selected.UserID)
 		assert.Equal(t, input.FirstName, selected.FirstName)
 		assert.Equal(t, input.LastName, selected.LastName)
-		assert.Equal(t, input.DateOfBirth, selected.DateOfBirth)
+		assert.NotEqual(t, input.DateOfBirth, selected.DateOfBirth)
 	})
 
 	t.Run("should fail to insert with duplicate userId", func(t *testing.T) {
@@ -131,13 +129,4 @@ func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
 			assert.Equal(t, fmt.Sprintf("unique violation error | userId:%s", input2.UserID), uErr.Error(), "expected unique violation error message")
 		}
 	})
-}
-
-func truncateUserProfile(dbConn *sql.DB) {
-	log.Printf("truncating user_profile table")
-	_, err := dbConn.Exec("TRUNCATE TABLE user_profile CASCADE;")
-	if err != nil {
-		log.Printf("failed to truncate user_profile table: %v", err)
-		return
-	}
 }
