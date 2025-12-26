@@ -15,6 +15,7 @@ import (
 	"github.com/dyxj/bigbackend/internal/userprofile"
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/logx"
+	"github.com/dyxj/bigbackend/pkg/testx"
 	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/go-jet/jet/v2/postgres"
 	"github.com/stretchr/testify/assert"
@@ -25,7 +26,7 @@ func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to initialize logger: %v", err)
 	}
-	dbConn := getTestDBConn()
+	dbConn := testx.GlobalEnv().DBConn()
 
 	t.Run("should insert successfully", func(t *testing.T) {
 		t.Cleanup(func() {
@@ -82,7 +83,7 @@ func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
 		assert.Equal(t, input.UserID, selected.UserID)
 		assert.Equal(t, input.FirstName, selected.FirstName)
 		assert.Equal(t, input.LastName, selected.LastName)
-		assert.NotEqual(t, input.DateOfBirth, selected.DateOfBirth)
+		assert.Equal(t, input.DateOfBirth, selected.DateOfBirth)
 	})
 
 	t.Run("should fail to insert with duplicate userId", func(t *testing.T) {

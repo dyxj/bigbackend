@@ -15,6 +15,7 @@ import (
 	"github.com/dyxj/bigbackend/internal/config"
 	"github.com/dyxj/bigbackend/internal/userprofile"
 	"github.com/dyxj/bigbackend/pkg/logx"
+	"github.com/dyxj/bigbackend/pkg/testx"
 	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -31,12 +32,13 @@ func TestUserProfileHandler(t *testing.T) {
 		t.Fatalf("failed to init logger: %v", err)
 	}
 
-	dbConn := getTestDBConn()
+	dbConn := testx.GlobalEnv().DBConn()
 
 	t.Cleanup(func() {
 		truncateUserProfile(dbConn)
 	})
 
+	// TODO move server setup to test main
 	srv := app.NewServer(logger, dbConn, cfg.HTTPServerConfig)
 
 	testSrv := httptest.NewServer(srv.BuildRouter())

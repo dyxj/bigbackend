@@ -6,34 +6,25 @@ import (
 	"log"
 	"os"
 	"testing"
+
+	"github.com/dyxj/bigbackend/pkg/testx"
 )
 
 func TestMain(m *testing.M) {
 	var code int
 	defer func() {
-		log.Printf("clean up complete")
 		os.Exit(code)
 	}()
 
-	db, err := setupTestDB()
-	if err != nil {
-		log.Panicf("failed to start test container: %v", err)
-	}
-	defer teardownTestDB(db)
+	ready, errors := testx.RunGlobalEnv()
 
-	setupTestDBConn(db)
-	defer closeTestDBConn()
-
-	dbConn := getTestDBConn()
-	err = dbConn.Ping()
-	if err != nil {
-		log.Panicf("failed to ping testcontainer database: %v", err)
+	select {
+	case <-ready:
+		log.Printf("test environment is ready")
+	case err := <-errors:
+		log.Panicf("failed to start test environment: %v", err)
 	}
-
-	err = runMigrations(dbConn)
-	if err != nil {
-		log.Panicf("failed to run migrations: %v", err)
-	}
+	defer testx.GlobalEnv().Close()
 
 	code = m.Run()
 }
