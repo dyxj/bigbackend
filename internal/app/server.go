@@ -116,16 +116,16 @@ func (s *Server) listenForStopAndOrchestrateShutdown() {
 		s.logger.Error("failed to wait for ongoing requests to finish, waiting for forced cancellation", zap.Error(err))
 		time.Sleep(s.httpConfig.ShutDownHardTimeout())
 		s.logger.Error("httpServer shut down ungracefully")
-		s.done <- struct{}{}
+		close(s.done)
 		return
 	}
 
 	s.logger.Info("httpServer shut down gracefully")
-	s.done <- struct{}{}
+	close(s.done)
 }
 
 func (s *Server) Stop() <-chan struct{} {
-	s.stopSig <- struct{}{}
+	close(s.stopSig)
 	return s.done
 }
 
