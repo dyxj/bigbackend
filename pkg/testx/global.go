@@ -4,6 +4,7 @@ package testx
 
 import (
 	"log"
+	"net/http/httptest"
 	"sync"
 )
 
@@ -24,4 +25,8 @@ func GlobalEnv() *Environment {
 		log.Panicf("global test environment is not initialized")
 	}
 	return global
+}
+
+func HTTPTestServer() *httptest.Server {
+	return GlobalEnv().HttpTestServer()
 }

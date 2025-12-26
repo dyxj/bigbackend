@@ -8,13 +8,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
-	"github.com/dyxj/bigbackend/internal/app"
-	"github.com/dyxj/bigbackend/internal/config"
 	"github.com/dyxj/bigbackend/internal/userprofile"
-	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/testx"
 	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/google/uuid"
@@ -22,15 +18,6 @@ import (
 )
 
 func TestUserProfileHandler(t *testing.T) {
-	cfg, err := config.LoadConfig()
-	if err != nil {
-		t.Fatalf("failed to load config: %v", err)
-	}
-
-	logger, err := logx.InitLogger()
-	if err != nil {
-		t.Fatalf("failed to init logger: %v", err)
-	}
 
 	dbConn := testx.GlobalEnv().DBConn()
 
@@ -38,16 +25,13 @@ func TestUserProfileHandler(t *testing.T) {
 		truncateUserProfile(dbConn)
 	})
 
-	// TODO move server setup to test main
-	srv := app.NewServer(logger, dbConn, cfg.HTTPServerConfig)
-
-	testSrv := httptest.NewServer(srv.BuildRouter())
+	testSrv := testx.GlobalEnv().HttpTestServer()
 	defer testSrv.Close()
 
 	payload := faker.UserProfileCreateRequest()
 
 	var buf bytes.Buffer
-	err = json.NewEncoder(&buf).Encode(&payload)
+	err := json.NewEncoder(&buf).Encode(&payload)
 	if err != nil {
 		t.Fatalf("failed to encode payload: %v", err)
 	}

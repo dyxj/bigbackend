@@ -8,11 +8,15 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"sync"
 	"time"
 
+	"github.com/dyxj/bigbackend/internal/app"
+	"github.com/dyxj/bigbackend/internal/config"
+	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/sqldb"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
@@ -36,6 +40,8 @@ type Environment struct {
 	runOnce   sync.Once
 	closeOnce sync.Once
 
+	httptestServer *httptest.Server
+
 	logger *log.Logger
 }
 
@@ -53,6 +59,10 @@ func NewEnvironment(name string, enableServer bool) *Environment {
 
 func (e *Environment) DBConn() *sql.DB {
 	return e.dbConn
+}
+
+func (e *Environment) HttpTestServer() *httptest.Server {
+	return e.httptestServer
 }
 
 // Run starts the environment and returns channels to signal readiness and errors.
@@ -87,6 +97,16 @@ func (e *Environment) run(ready chan struct{}, errorChan chan error) {
 	if err != nil {
 		errorChan <- err
 		return
+	}
+
+	if e.enableServer {
+		err = e.setupHttpTestServer()
+		if err != nil {
+			errorChan <- err
+			return
+		}
+		e.wgClose.Add(1)
+		defer e.closeHttpTestServer()
 	}
 
 	close(ready)
@@ -198,4 +218,27 @@ func (e *Environment) getProjectRoot() (string, error) {
 		}
 		dir = parent
 	}
+}
+
+func (e *Environment) setupHttpTestServer() error {
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		return fmt.Errorf("failed to load config: %w", err)
+	}
+
+	logger, err := logx.InitLogger()
+	if err != nil {
+		return fmt.Errorf("failed to init logger: %w", err)
+	}
+
+	srv := app.NewServer(logger, e.dbConn, cfg.HTTPServerConfig)
+
+	e.httptestServer = httptest.NewServer(srv.BuildRouter())
+	return nil
+}
+
+func (e *Environment) closeHttpTestServer() {
+	e.logger.Printf("close http test server")
+	e.httptestServer.Close()
+	e.wgClose.Done()
 }
