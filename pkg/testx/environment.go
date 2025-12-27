@@ -32,10 +32,10 @@ type Environment struct {
 	dbContainer *postgres.PostgresContainer
 	dbConn      *sql.DB
 
-	ready     chan struct{}
-	errorChan chan error
-	close     chan struct{}
-	wgClose   *sync.WaitGroup
+	ready       chan struct{}
+	errorChan   chan error
+	close       chan struct{}
+	cleanupDone chan struct{}
 
 	runOnce   sync.Once
 	closeOnce sync.Once
@@ -52,7 +52,7 @@ func NewEnvironment(name string, enableServer bool) *Environment {
 		ready:        make(chan struct{}),
 		errorChan:    make(chan error),
 		close:        make(chan struct{}),
-		wgClose:      &sync.WaitGroup{},
+		cleanupDone:  make(chan struct{}),
 		logger:       log.New(os.Stderr, fmt.Sprintf("test-env-%s ", name), log.LstdFlags),
 	}
 }
@@ -77,12 +77,13 @@ func (e *Environment) Run() (<-chan struct{}, <-chan error) {
 }
 
 func (e *Environment) run(ready chan struct{}, errorChan chan error) {
+	defer close(e.cleanupDone)
+
 	err := e.setupDBContainer()
 	if err != nil {
 		errorChan <- err
 		return
 	}
-	e.wgClose.Add(1)
 	defer e.teardownDBContainer()
 
 	err = e.setupDBConn()
@@ -90,7 +91,6 @@ func (e *Environment) run(ready chan struct{}, errorChan chan error) {
 		errorChan <- err
 		return
 	}
-	e.wgClose.Add(1)
 	defer e.closeDBConn()
 
 	err = e.runMigrations()
@@ -105,7 +105,6 @@ func (e *Environment) run(ready chan struct{}, errorChan chan error) {
 			errorChan <- err
 			return
 		}
-		e.wgClose.Add(1)
 		defer e.closeHttpTestServer()
 	}
 
@@ -119,7 +118,7 @@ func (e *Environment) Close() {
 	e.closeOnce.Do(func() {
 		close(e.close)
 	})
-	e.wgClose.Wait()
+	<-e.cleanupDone
 	e.logger.Printf("environment closed")
 }
 
@@ -156,7 +155,6 @@ func (e *Environment) teardownDBContainer() {
 	if err := testcontainers.TerminateContainer(e.dbContainer); err != nil {
 		e.logger.Printf("failed to teardown container: %v", err)
 	}
-	e.wgClose.Done()
 }
 
 // setupDBConn sets up the database connection using the connection string from the dbContainer.
@@ -181,7 +179,6 @@ func (e *Environment) closeDBConn() {
 	if err != nil {
 		e.logger.Printf("failed to close db connection: %v", err)
 	}
-	e.wgClose.Done()
 }
 
 // runMigrations runs database migrations on the provided database connection.
@@ -240,5 +237,4 @@ func (e *Environment) setupHttpTestServer() error {
 func (e *Environment) closeHttpTestServer() {
 	e.logger.Printf("close http test server")
 	e.httptestServer.Close()
-	e.wgClose.Done()
 }
