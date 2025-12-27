@@ -28,7 +28,7 @@ func TestCreator_CreateUserProfileTx_Successfully(t *testing.T) {
 		t.Fatalf("failed to initialize logger: %v", err)
 	}
 
-	mockRepo := new(mockCreatorRepo)
+	mockRepo := new(faker.UserProfileCreatorRepoMock)
 	mockRepo.
 		On("InsertUserProfile", mock.Anything, mock.Anything, mock.Anything).
 		Run(func(args mock.Arguments) {
@@ -102,7 +102,7 @@ func TestCreator_CreateUserProfileTx_ValidationError(t *testing.T) {
 
 	for _, tc := range tcc {
 		t.Run(tc.name, func(t *testing.T) {
-			mockRepo := new(mockCreatorRepo)
+			mockRepo := new(faker.UserProfileCreatorRepoMock)
 
 			creator := userprofile.NewCreator(
 				logger,
@@ -128,7 +128,7 @@ func TestCreator_CreateUserProfileTx_InsertUserProfileError(t *testing.T) {
 		t.Fatalf("failed to initialize logger: %v", err)
 	}
 
-	mockRepo := new(mockCreatorRepo)
+	mockRepo := new(faker.UserProfileCreatorRepoMock)
 	mockRepo.
 		On("InsertUserProfile", mock.Anything, mock.Anything, mock.Anything).
 		Return(entity.UserProfile{}, &errorx.UniqueViolationError{}).
