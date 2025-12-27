@@ -61,19 +61,16 @@ Check out `Taskfile.yml` on how to generate models and sql builders.
 Checkout `Taskfile.yml` on how to generate mappers.  
 Examples can be found in `[domain]_mapdef.go` files, resulting generated file is `[domain]_mapper.go`.
 
-## Plan
+## Next Steps
 - [x] Setup logger
 - [x] Generate model and sql builders
 - [x] Custom struct with go-jet, ie: shop-spring decimal or date for example
 - [x] Database get and create
 - [x] Mapper
 - [ ] Integrate db query, domain and handler, test and validation
-  - [ ] creator
-    - Test handler, consider testing on mux instead of just handler to ensure routing works
-  - [ ] add deletedAt nullable, don't forget indexing
+  - [x] creator
   - [ ] getter
   - [ ] updater
-  - [ ] deleter
 - [ ] Http server
   - [x] Extract to standalone server instead of main
   - [ ] Switch to chi router
@@ -95,3 +92,4 @@ Examples can be found in `[domain]_mapdef.go` files, resulting generated file is
 - [ ] User activation
 - [ ] User account(auth)
 - [ ] Revise plantUML, completely forgot syntax
+- [ ] deleter, add deletedAt nullable and indexing
