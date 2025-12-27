@@ -1,6 +1,7 @@
 package errorx
 
 import (
+	"errors"
 	"strings"
 )
 
@@ -40,3 +41,5 @@ func writeErrorWithProperties(prefix string, properties map[string]string) strin
 	}
 	return sb.String()
 }
+
+var ErrNotFound = errors.New("not found")
