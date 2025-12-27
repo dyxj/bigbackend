@@ -43,6 +43,16 @@ func BadRequestResponse(message string, details map[string]string, w http.Respon
 		w)
 }
 
+func ConflictResponse(message string, details map[string]string, w http.ResponseWriter) {
+	JsonResponse(
+		http.StatusConflict,
+		ErrorResponse{
+			Message: message,
+			Details: details,
+		},
+		w)
+}
+
 func ValidationFailedResponse(validationFailure *errorx.ValidationError, w http.ResponseWriter) {
 	JsonResponse(
 		http.StatusBadRequest,

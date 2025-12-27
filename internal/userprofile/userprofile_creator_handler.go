@@ -97,7 +97,7 @@ func (c *CreatorHandler) resolveError(err error, w http.ResponseWriter) {
 	var uErr *errorx.UniqueViolationError
 	if errors.As(err, &uErr) {
 		c.logger.Warn("failed to insert user profile due to unique key violation", zap.Error(uErr))
-		httpx.BadRequestResponse("user profile already exists", nil, w)
+		httpx.ConflictResponse("user profile already exists", nil, w)
 		return
 	}
 	var vErr *errorx.ValidationError
