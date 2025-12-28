@@ -12,6 +12,8 @@ const contentTypeJSON = "application/json"
 const headerKeyContentType = "Content-Type"
 
 const internalServerErrorDefaultMessage = "internal server error"
+const validationFailedDefaultMessage = "validation failed"
+const notFoundDefaultMessage = "resource not found"
 
 func JsonResponse(statusCode int, resp any, w http.ResponseWriter) {
 	// Why not directly in the response writer?
@@ -43,22 +45,29 @@ func BadRequestResponse(message string, details map[string]string, w http.Respon
 		w)
 }
 
+func ValidationFailedResponse(validationFailure *errorx.ValidationError, w http.ResponseWriter) {
+	JsonResponse(
+		http.StatusBadRequest,
+		ErrorResponse{
+			Message: validationFailedDefaultMessage,
+			Details: validationFailure.Properties,
+		},
+		w)
+}
+
+func NotFoundResponse(w http.ResponseWriter) {
+	JsonResponse(
+		http.StatusNotFound,
+		ErrorResponse{Message: notFoundDefaultMessage},
+		w)
+}
+
 func ConflictResponse(message string, details map[string]string, w http.ResponseWriter) {
 	JsonResponse(
 		http.StatusConflict,
 		ErrorResponse{
 			Message: message,
 			Details: details,
-		},
-		w)
-}
-
-func ValidationFailedResponse(validationFailure *errorx.ValidationError, w http.ResponseWriter) {
-	JsonResponse(
-		http.StatusBadRequest,
-		ErrorResponse{
-			Message: "validation failed",
-			Details: validationFailure.Properties,
 		},
 		w)
 }

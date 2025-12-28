@@ -69,7 +69,7 @@ Examples can be found in `[domain]_mapdef.go` files, resulting generated file is
 - [x] Mapper
 - [ ] Integrate db query, domain and handler, test and validation
   - [x] creator
-  - [ ] getter
+  - [x] getter
   - [ ] updater
 - [ ] Http server
   - [x] Extract to standalone server instead of main

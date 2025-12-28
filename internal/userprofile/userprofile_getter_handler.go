@@ -1,38 +1,57 @@
 package userprofile
 
 import (
+	"context"
+	"errors"
 	"net/http"
 
+	"github.com/dyxj/bigbackend/pkg/errorx"
+	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
 
 type GetterHandler struct {
 	logger *zap.Logger
+	getter Getter
+	mapper Mapper
 }
 
-func NewGetterHandler(logger *zap.Logger) *GetterHandler {
-	return &GetterHandler{logger: logger}
+func NewGetterHandler(logger *zap.Logger, getter Getter, mapper Mapper) *GetterHandler {
+	return &GetterHandler{logger: logger, getter: getter, mapper: mapper}
 }
 
-func (g *GetterHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	idStr := request.PathValue("id")
+func (g *GetterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
 
 	id, err := uuid.Parse(idStr)
 	if err != nil {
-		g.log().Info("invalid id", zap.String("id", idStr))
-		http.Error(writer, "invalid id", http.StatusBadRequest)
+		g.logger.Warn("failed to parse id", zap.String("id", idStr), zap.Error(err))
+		httpx.BadRequestResponse("invalid id",
+			map[string]string{"error": err.Error()},
+			w)
 		return
 	}
 
-	_, err = writer.Write([]byte(id.String()))
+	profile, err := g.getter.GetUserProfileByUserID(r.Context(), id)
 	if err != nil {
-		g.log().Error("failed to write response", zap.Error(err))
+		g.resolveError(err, w)
 		return
 	}
-	return
+
+	resp := g.mapper.ModelToResponse(profile)
+
+	httpx.JsonResponse(http.StatusOK, resp, w)
 }
 
-func (g *GetterHandler) log() *zap.Logger {
-	return g.logger.With(zap.String("component", "userprofile_getter_handler"))
+func (g *GetterHandler) resolveError(err error, w http.ResponseWriter) {
+	if errors.Is(err, errorx.ErrNotFound) {
+		httpx.NotFoundResponse(w)
+		return
+	}
+	httpx.InternalServerErrorResponse("", w)
+}
+
+type Getter interface {
+	GetUserProfileByUserID(ctx context.Context, userID uuid.UUID) (UserProfile, error)
 }

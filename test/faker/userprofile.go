@@ -70,3 +70,15 @@ func (m *UserProfileCreatorMock) CreateUserProfileTx(
 	returnArgs := m.Called(ctx, tx, input)
 	return returnArgs.Get(0).(userprofile.UserProfile), returnArgs.Error(1)
 }
+
+type UserProfileGetterMock struct {
+	mock.Mock
+}
+
+func (m *UserProfileGetterMock) GetUserProfileByUserID(
+	ctx context.Context,
+	userID uuid.UUID,
+) (userprofile.UserProfile, error) {
+	returnArgs := m.Called(ctx, userID)
+	return returnArgs.Get(0).(userprofile.UserProfile), returnArgs.Error(1)
+}
