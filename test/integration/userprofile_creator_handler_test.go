@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"testing"
@@ -40,7 +39,7 @@ func TestUserProfileCreatorHandler_ShouldCreate(t *testing.T) {
 
 	request, err := http.NewRequest(
 		"POST",
-		buildUserProfileUrl(testSrv.URL, payload.UserID),
+		buildUserProfileUrl(testSrv.URL, payload.UserID.String()),
 		&buf)
 	if err != nil {
 		t.Fatalf("failed to build request: %v", err)
@@ -151,7 +150,7 @@ func TestUserProfileCreatorHandler_PayloadValidationError(t *testing.T) {
 
 			request, err := http.NewRequest(
 				"POST",
-				buildUserProfileUrl(testSrv.URL, payload.UserID),
+				buildUserProfileUrl(testSrv.URL, payload.UserID.String()),
 				&buf)
 			if err != nil {
 				t.Fatalf("failed to build request: %v", err)
@@ -221,7 +220,7 @@ func TestUserProfileCreatorHandler_InvalidJsonError(t *testing.T) {
 
 			request, err := http.NewRequest(
 				"POST",
-				buildUserProfileUrl(testSrv.URL, payload.UserID),
+				buildUserProfileUrl(testSrv.URL, payload.UserID.String()),
 				&buf)
 			if err != nil {
 				t.Fatalf("failed to build request: %v", err)
@@ -269,7 +268,7 @@ func TestUserProfileCreatorHandler_URL_ID_payload_ID_mismatch(t *testing.T) {
 
 	request, err := http.NewRequest(
 		"POST",
-		buildUserProfileUrl(testSrv.URL, userIdMismatch),
+		buildUserProfileUrl(testSrv.URL, userIdMismatch.String()),
 		&buf)
 	if err != nil {
 		t.Fatalf("failed to build request: %v", err)
@@ -326,7 +325,7 @@ func TestUserProfileCreatorHandler_Unique_Violation(t *testing.T) {
 
 	request, err := http.NewRequest(
 		"POST",
-		buildUserProfileUrl(testSrv.URL, payload.UserID),
+		buildUserProfileUrl(testSrv.URL, payload.UserID.String()),
 		&buf)
 	if err != nil {
 		t.Fatalf("failed to build request: %v", err)
@@ -351,8 +350,4 @@ func TestUserProfileCreatorHandler_Unique_Violation(t *testing.T) {
 	assert.Equal(t, http.StatusConflict, resp.StatusCode)
 	assert.Equal(t, "user profile already exists", result.Message)
 	assert.Nil(t, result.Details)
-}
-
-func buildUserProfileUrl(url string, userId uuid.UUID) string {
-	return fmt.Sprintf("%s/user/%s/profile", url, userId.String())
 }
