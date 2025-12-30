@@ -93,3 +93,6 @@ Examples can be found in `[domain]_mapdef.go` files, resulting generated file is
 - [ ] User account(auth)
 - [ ] Revise plantUML, completely forgot syntax
 - [ ] deleter, add deletedAt nullable and indexing
+- [ ] Improve error structure and packages, there are properties that do the same things
+  - ie http status code and error response code
+  - error are also split in multiple packages, can be done better

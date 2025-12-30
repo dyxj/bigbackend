@@ -13,7 +13,7 @@ const headerKeyContentType = "Content-Type"
 
 const internalServerErrorDefaultMessage = "internal server error"
 const validationFailedDefaultMessage = "validation failed"
-const notFoundDefaultMessage = "resource not found"
+const notFoundDefaultMessage = "entity not found"
 
 func JsonResponse(statusCode int, resp any, w http.ResponseWriter) {
 	// Why not directly in the response writer?
@@ -39,6 +39,7 @@ func BadRequestResponse(message string, details map[string]string, w http.Respon
 	JsonResponse(
 		http.StatusBadRequest,
 		ErrorResponse{
+			Code:    CodeBadRequest,
 			Message: message,
 			Details: details,
 		},
@@ -49,6 +50,7 @@ func ValidationFailedResponse(validationFailure *errorx.ValidationError, w http.
 	JsonResponse(
 		http.StatusBadRequest,
 		ErrorResponse{
+			Code:    CodeBadRequest,
 			Message: validationFailedDefaultMessage,
 			Details: validationFailure.Properties,
 		},
@@ -58,7 +60,10 @@ func ValidationFailedResponse(validationFailure *errorx.ValidationError, w http.
 func NotFoundResponse(w http.ResponseWriter) {
 	JsonResponse(
 		http.StatusNotFound,
-		ErrorResponse{Message: notFoundDefaultMessage},
+		ErrorResponse{
+			Code:    CodeEntityNotFound,
+			Message: notFoundDefaultMessage,
+		},
 		w)
 }
 
@@ -66,6 +71,7 @@ func ConflictResponse(message string, details map[string]string, w http.Response
 	JsonResponse(
 		http.StatusConflict,
 		ErrorResponse{
+			Code:    CodeDuplicateEntity,
 			Message: message,
 			Details: details,
 		},
@@ -78,6 +84,9 @@ func InternalServerErrorResponse(message string, w http.ResponseWriter) {
 	}
 	JsonResponse(
 		http.StatusInternalServerError,
-		ErrorResponse{Message: message},
+		ErrorResponse{
+			Code:    CodeServerError,
+			Message: message,
+		},
 		w)
 }

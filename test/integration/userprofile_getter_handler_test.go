@@ -107,7 +107,8 @@ func TestUserProfileGetterHandler_NotFound(t *testing.T) {
 
 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 
-	assert.Equal(t, "resource not found", result.Message)
+	assert.Equal(t, httpx.CodeEntityNotFound, result.Code)
+	assert.Equal(t, "entity not found", result.Message)
 	assert.Nil(t, result.Details)
 }
 
@@ -146,6 +147,7 @@ func TestUserProfileGetterHandler_InvalidUserId(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 
+	assert.Equal(t, httpx.CodeBadRequest, result.Code)
 	assert.Equal(t, "invalid id", result.Message)
 	assert.Equal(t, "invalid UUID length: 12", result.Details["error"])
 }

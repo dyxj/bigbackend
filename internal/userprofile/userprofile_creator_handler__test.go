@@ -69,6 +69,7 @@ func TestCreatorHandler_BeginTxError(t *testing.T) {
 	handler.ServeHTTP(rr, request)
 
 	expectedResultPayload := httpx.ErrorResponse{
+		Code:    httpx.CodeServerError,
 		Message: "internal server error",
 		Details: nil,
 	}
@@ -145,6 +146,7 @@ func TestCreatorHandler_CreatorValidationError(t *testing.T) {
 	handler.ServeHTTP(rr, request)
 
 	expectedResultPayload := httpx.ErrorResponse{
+		Code:    httpx.CodeServerError,
 		Message: "internal server error",
 		Details: nil,
 	}
@@ -219,6 +221,7 @@ func TestCreatorHandler_UnexpectedCreatorError(t *testing.T) {
 	handler.ServeHTTP(rr, request)
 
 	expectedResultPayload := httpx.ErrorResponse{
+		Code:    httpx.CodeBadRequest,
 		Message: "validation failed",
 		Details: map[string]string{"firstName": "fake validation error"},
 	}
@@ -295,6 +298,7 @@ func TestCreatorHandler_TxCommitError(t *testing.T) {
 	handler.ServeHTTP(rr, request)
 
 	expectedResultPayload := httpx.ErrorResponse{
+		Code:    httpx.CodeServerError,
 		Message: "internal server error",
 		Details: nil,
 	}

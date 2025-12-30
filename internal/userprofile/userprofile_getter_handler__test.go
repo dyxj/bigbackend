@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestGetterHandler_(t *testing.T) {
+func TestGetterHandler_InternalServerError(t *testing.T) {
 	logger, err := logx.InitLogger()
 	if err != nil {
 		t.Fatalf("failed to initialize logger: %v", err)
@@ -55,6 +55,7 @@ func TestGetterHandler_(t *testing.T) {
 	getterHandler.ServeHTTP(rr, request)
 
 	expectedResultPayload := httpx.ErrorResponse{
+		Code:    httpx.CodeServerError,
 		Message: "internal server error",
 		Details: nil,
 	}

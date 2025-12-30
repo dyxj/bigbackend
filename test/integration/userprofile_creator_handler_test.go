@@ -93,6 +93,7 @@ func TestUserProfileCreatorHandler_PayloadValidationError(t *testing.T) {
 				r.UserID = uuid.Nil
 			},
 			errResp: httpx.ErrorResponse{
+				Code:    httpx.CodeBadRequest,
 				Message: "validation failed",
 				Details: map[string]string{
 					"userId": "is required",
@@ -105,6 +106,7 @@ func TestUserProfileCreatorHandler_PayloadValidationError(t *testing.T) {
 				r.FirstName = ""
 			},
 			errResp: httpx.ErrorResponse{
+				Code:    httpx.CodeBadRequest,
 				Message: "validation failed",
 				Details: map[string]string{
 					"firstName": "is required",
@@ -117,6 +119,7 @@ func TestUserProfileCreatorHandler_PayloadValidationError(t *testing.T) {
 				r.LastName = ""
 			},
 			errResp: httpx.ErrorResponse{
+				Code:    httpx.CodeBadRequest,
 				Message: "validation failed",
 				Details: map[string]string{
 					"lastName": "is required",
@@ -129,6 +132,7 @@ func TestUserProfileCreatorHandler_PayloadValidationError(t *testing.T) {
 				input.DateOfBirth = civil.DateOf(time.Now().Add(time.Hour * 24))
 			},
 			errResp: httpx.ErrorResponse{
+				Code:    httpx.CodeBadRequest,
 				Message: "validation failed",
 				Details: map[string]string{
 					"dateOfBirth": "is invalid or in the future",
