@@ -13,6 +13,7 @@ func InitLogger() (*zap.Logger, error) {
 	config.InitialFields = map[string]interface{}{
 		"service": "bigbackend",
 	}
+	config.DisableStacktrace = true
 
 	logger, err := config.Build()
 	if err != nil {
