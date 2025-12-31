@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+var ErrNotFound = errors.New("not found")
+
 const validationErrorPrefix = "validation error"
 const uniqueViolationErrorPrefix = "unique violation error"
 const errSeparator = " | "
@@ -41,5 +43,3 @@ func writeErrorWithProperties(prefix string, properties map[string]string) strin
 	}
 	return sb.String()
 }
-
-var ErrNotFound = errors.New("not found")

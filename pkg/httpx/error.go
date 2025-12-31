@@ -9,11 +9,11 @@ type ErrorResponse struct {
 type errorCode string
 
 const (
-	CodeBadRequest               errorCode = "bad_request"
-	CodeServerError              errorCode = "server_error"
-	CodeEntityNotFound           errorCode = "entity_not_found"
-	CodeDuplicateEntity          errorCode = "duplicate_entity"
-	CodeIdempotencyKeyInProgress errorCode = "idempotency_key_in_progress"
+	CodeBadRequest       errorCode = "bad_request"
+	CodeServerError      errorCode = "server_error"
+	CodeEntityNotFound   errorCode = "entity_not_found"
+	CodeDuplicateEntity  errorCode = "duplicate_entity"
+	CodeIdempotencyError errorCode = "idempotency_error"
 )
 
 func (e errorCode) String() string {

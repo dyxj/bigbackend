@@ -1,8 +1,10 @@
 package app
 
-import "net/http"
+import (
+	"net/http"
+)
 
-func (s *Server) BuildRouter() *http.ServeMux {
+func (s *Server) BuildRouter() http.Handler {
 	router := http.NewServeMux()
 
 	userProfileCreatorHandler, userProfileGetterHandler := s.buildUserProfileHandlers()
