@@ -2,6 +2,8 @@ package app
 
 import (
 	"net/http"
+
+	"github.com/dyxj/bigbackend/pkg/idempotency"
 )
 
 func (s *Server) BuildRouter() http.Handler {
@@ -13,5 +15,12 @@ func (s *Server) BuildRouter() http.Handler {
 	router.Handle("GET /user/{id}/profile", s.TimeoutHandler(userProfileGetterHandler))
 	router.Handle("POST /user/{id}/profile", s.TimeoutHandler(userProfileCreatorHandler))
 
-	return router
+	idemStore := idempotency.NewMemStore(idempotency.DefaultLockConfig)
+
+	return idempotency.Middleware(
+		s.logger,
+		idempotency.DefaultKeyExtractor,
+		idemStore,
+		router,
+	)
 }
