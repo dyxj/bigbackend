@@ -32,7 +32,7 @@ func (s *MemStore) Lock(ctx context.Context, key string, opts ...LockOptions) er
 
 	retries := 0
 	for {
-		_, isLocked := s.locks[key]
+		_, isLocked := s.getLock(key)
 		if !isLocked {
 			s.lock(ctx, key)
 			// set lock expiry
@@ -52,9 +52,17 @@ func (s *MemStore) Lock(ctx context.Context, key string, opts ...LockOptions) er
 
 		select {
 		case <-ctx.Done():
+			return ErrInProgress
 		case <-time.After(config.RetryDelay):
 		}
 	}
+}
+
+func (s *MemStore) getLock(key string) (struct{}, bool) {
+	s.muLocks.RLock()
+	defer s.muLocks.RUnlock()
+	sKey, ok := s.locks[key]
+	return sKey, ok
 }
 
 func (s *MemStore) lock(ctx context.Context, key string) {
