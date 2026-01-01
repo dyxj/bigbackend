@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"time"
 
 	"go.uber.org/zap"
 )
@@ -13,59 +12,62 @@ const DefaultHeaderKey = "Idempotency-Key"
 const TenantIdHeaderKey = "X-Tenant-Id"
 const keySeparator = "::"
 
-type KeyExtractor func(r *http.Request) string
-
-func DefaultKeyExtractor(r *http.Request) string {
-	return r.Header.Get(DefaultHeaderKey)
+type Middleware struct {
+	logger *zap.Logger
+	store  Store
+	config *Config
 }
 
-func TenantAndIdempotency(r *http.Request) string {
-	key := r.Header.Get(DefaultHeaderKey)
-	if key == "" {
-		return ""
-	}
-	tenantId := r.Header.Get(TenantIdHeaderKey)
-	return tenantId + keySeparator + key
-}
-
-func Middleware(
+func NewMiddleware(
 	logger *zap.Logger,
-	extractor KeyExtractor,
 	store Store,
-	next http.Handler,
-) http.Handler {
-	if extractor == nil {
-		extractor = DefaultKeyExtractor
+	options ...Option,
+) *Middleware {
+	config := DefaultConfig()
+
+	for _, opt := range options {
+		opt(config)
 	}
 
+	return &Middleware{
+		logger: logger,
+		store:  store,
+		config: config,
+	}
+}
+
+func (m *Middleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		key := extractor(r)
+		key := m.config.extractor(r)
 		if key == "" || r.Method == http.MethodGet {
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		err := store.Lock(r.Context(), key, WithRetry(2, 100*time.Millisecond))
+		err := m.store.Lock(r.Context(), key, m.config.lockOptions...)
 		if err != nil {
 			if errors.Is(err, ErrInProgress) {
-				http.Error(w, "idempotent in progress", http.StatusConflict)
+				m.logger.Warn("idempotent request in progress", zap.String("key", key))
+				m.config.errRespWriter(err, w)
 				return
 			}
-			http.Error(w, "idempotent lock error", http.StatusInternalServerError)
+			m.logger.Error("idempotent lock error", zap.Error(err), zap.String("key", key))
+			m.config.errRespWriter(err, w)
 			return
 		}
 
 		defer func(store Store, ctx context.Context, key string) {
 			err := store.Unlock(ctx, key)
 			if err != nil {
-				logger.Error("failed to unlock idempotent key",
+				m.logger.Error("failed to unlock idempotent key",
 					zap.Error(err), zap.String("key", key))
 			}
-		}(store, r.Context(), key)
+		}(m.store, r.Context(), key)
 
-		cached, err := store.Get(r.Context(), key)
+		cached, err := m.store.Get(r.Context(), key)
 		if err != nil {
-			http.Error(w, "failed to retrieve cache response", http.StatusInternalServerError)
+			m.logger.Error("failed to retrieve cache response", zap.Error(err), zap.String("key", key))
+			m.config.errRespWriter(err, w)
 			return
 		}
 		if cached != nil {
@@ -83,18 +85,42 @@ func Middleware(
 		next.ServeHTTP(recorderWriter, r)
 
 		// cache response
-		err = store.Set(ctx, key, &Response{
-			Status: recorderWriter.status,
-			Header: recorderWriter.cloneHeaders(),
-			Body:   recorderWriter.body.Bytes(),
-		}, 5*time.Minute)
+		err = m.store.Set(ctx, key,
+			&Response{
+				Status: recorderWriter.status,
+				Header: recorderWriter.cloneHeaders(),
+				Body:   recorderWriter.body.Bytes(),
+			},
+			m.config.cacheExpiry)
 		if err != nil {
-			logger.Error("failed to store response",
-				zap.Error(err),
-				zap.String("key", key),
-			)
+			m.logger.Error("failed to store response", zap.Error(err), zap.String("key", key))
 		}
 	})
+}
+
+type ErrorResponseWriter func(err error, w http.ResponseWriter)
+
+func DefaultErrorResponseWriter(err error, w http.ResponseWriter) {
+	if errors.Is(err, ErrInProgress) {
+		http.Error(w, "request with the same idempotency key is already in progress", http.StatusConflict)
+		return
+	}
+	http.Error(w, "internal server error", http.StatusInternalServerError)
+}
+
+type KeyExtractor func(r *http.Request) string
+
+func DefaultKeyExtractor(r *http.Request) string {
+	return r.Header.Get(DefaultHeaderKey)
+}
+
+func TenantAndIdempotency(r *http.Request) string {
+	key := r.Header.Get(DefaultHeaderKey)
+	if key == "" {
+		return ""
+	}
+	tenantId := r.Header.Get(TenantIdHeaderKey)
+	return tenantId + keySeparator + key
 }
 
 func serveCachedResponse(cached *Response, w http.ResponseWriter) {

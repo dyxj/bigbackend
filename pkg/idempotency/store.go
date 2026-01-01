@@ -2,11 +2,8 @@ package idempotency
 
 import (
 	"context"
-	"errors"
 	"time"
 )
-
-var ErrInProgress = errors.New("key in progress")
 
 type Store interface {
 	Lock(ctx context.Context, key string, opts ...LockOptions) error
@@ -33,16 +30,24 @@ func DefaultLockConfig() *LockConfig {
 
 type LockOptions func(*LockConfig)
 
-func WithExpiry(expiry time.Duration) LockOptions {
+func WithLockExpiry(expiry time.Duration) LockOptions {
 	return func(config *LockConfig) {
 		config.Expiry = expiry
 	}
 }
 
-func WithRetry(attempts int, delay time.Duration) LockOptions {
+func WithLockRetry(attempts int, delay time.Duration) LockOptions {
 	return func(config *LockConfig) {
 		config.ShouldRetry = true
 		config.RetryAttempts = attempts
 		config.RetryDelay = delay
+	}
+}
+
+func WithLockNoRetry() LockOptions {
+	return func(config *LockConfig) {
+		config.ShouldRetry = false
+		config.RetryAttempts = 0
+		config.RetryDelay = 0
 	}
 }
