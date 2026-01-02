@@ -124,7 +124,7 @@ func TenantAndIdempotency(r *http.Request) string {
 }
 
 func serveCachedResponse(cached *Response, w http.ResponseWriter) {
-	copyAndReplaceHeaders(w.Header(), cached.Header)
+	clearAndCopyHeaders(w.Header(), cached.Header)
 	cStatus := cached.Status
 	if cStatus > 0 {
 		// Only if status is set write it, else default behaviour would result in 200
@@ -134,7 +134,7 @@ func serveCachedResponse(cached *Response, w http.ResponseWriter) {
 	_, _ = w.Write(cached.Body)
 }
 
-func copyAndReplaceHeaders(dst, src http.Header) {
+func clearAndCopyHeaders(dst, src http.Header) {
 	// ensure no prior headers leaks into response
 	for k := range dst {
 		dst.Del(k)

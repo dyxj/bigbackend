@@ -5,7 +5,7 @@ import "time"
 type Config struct {
 	extractor     KeyExtractor
 	errRespWriter ErrorResponseWriter
-	lockOptions   []LockOptions
+	lockOptions   []LockOption
 	cacheExpiry   time.Duration
 }
 
@@ -13,7 +13,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		extractor:     DefaultKeyExtractor,
 		errRespWriter: DefaultErrorResponseWriter,
-		lockOptions:   []LockOptions{},
+		lockOptions:   []LockOption{},
 		cacheExpiry:   24 * time.Hour,
 	}
 }
@@ -32,7 +32,7 @@ func WithErrorResponseWriter(writer ErrorResponseWriter) Option {
 	}
 }
 
-func WithLockOptions(options ...LockOptions) Option {
+func WithLockOptions(options ...LockOption) Option {
 	return func(c *Config) {
 		c.lockOptions = options
 	}

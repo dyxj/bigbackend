@@ -23,3 +23,11 @@ func (m *MockHTTPResponseWriter) Write(bytes []byte) (int, error) {
 func (m *MockHTTPResponseWriter) WriteHeader(statusCode int) {
 	m.Called(statusCode)
 }
+
+type MockHandler struct {
+	mock.Mock
+}
+
+func (m *MockHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	m.Called(writer, request)
+}

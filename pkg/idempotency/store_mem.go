@@ -23,7 +23,7 @@ func NewMemStore(defLockConfigFn func() *LockConfig) *MemStore {
 	}
 }
 
-func (s *MemStore) Lock(ctx context.Context, key string, opts ...LockOptions) error {
+func (s *MemStore) Lock(ctx context.Context, key string, opts ...LockOption) error {
 	config := s.defLockConfigFn()
 
 	for _, opt := range opts {

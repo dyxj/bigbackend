@@ -6,7 +6,7 @@ import (
 )
 
 type Store interface {
-	Lock(ctx context.Context, key string, opts ...LockOptions) error
+	Lock(ctx context.Context, key string, opts ...LockOption) error
 	Unlock(ctx context.Context, key string) error
 	Get(ctx context.Context, key string) (*Response, error)
 	Set(ctx context.Context, key string, resp *Response, expiry time.Duration) error
@@ -28,15 +28,15 @@ func DefaultLockConfig() *LockConfig {
 	}
 }
 
-type LockOptions func(*LockConfig)
+type LockOption func(*LockConfig)
 
-func WithLockExpiry(expiry time.Duration) LockOptions {
+func WithLockExpiry(expiry time.Duration) LockOption {
 	return func(config *LockConfig) {
 		config.Expiry = expiry
 	}
 }
 
-func WithLockRetry(attempts int, delay time.Duration) LockOptions {
+func WithLockRetry(attempts int, delay time.Duration) LockOption {
 	return func(config *LockConfig) {
 		config.ShouldRetry = true
 		config.RetryAttempts = attempts
@@ -44,7 +44,7 @@ func WithLockRetry(attempts int, delay time.Duration) LockOptions {
 	}
 }
 
-func WithLockNoRetry() LockOptions {
+func WithLockNoRetry() LockOption {
 	return func(config *LockConfig) {
 		config.ShouldRetry = false
 		config.RetryAttempts = 0
