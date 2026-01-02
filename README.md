@@ -5,13 +5,7 @@ Mainly a repo for me to refer to things I forget over time.
 
 ## Notes
 It should be noted, not all projects require such levels of abstractions and layers, just covering all scenarios.  
-The intent is also to cover microservices scenarios, but it's one repo for simplicity.  
-Eventually the project will consist of
-- user account
-  - id of this domain will be used as userId throughout other services
-- user activation
-- user profile
-- notification service(mainly for emails)
+The intent is also to cover microservices scenarios, however written in repo for ease of reference.
 
 ## Dev Tools
 - Docker and docker compose, should come together with Docker Desktop
@@ -62,26 +56,15 @@ Checkout `Taskfile.yml` on how to generate mappers.
 Examples can be found in `[domain]_mapdef.go` files, resulting generated file is `[domain]_mapper.go`.
 
 ## Next Steps
-- [x] Setup logger
-- [x] Generate model and sql builders
-- [x] Custom struct with go-jet, ie: shop-spring decimal or date for example
-- [x] Database get and create
-- [x] Mapper
-- [ ] Integrate db query, domain and handler, test and validation
-  - [x] creator
-  - [x] getter
-  - [ ] updater
+- [ ] Replace mock config with real config, extracting from env vars
 - [ ] Http server
   - [x] Extract to standalone server instead of main
   - [ ] Switch to chi router
   - [ ] Add middleware, crash recovery, tracing
-- [x] Graceful shutdown (Done, but it's ugly improve it before marking as done)
-- [ ] Replace mock config with real config, extracting from env vars
 - [ ] Implement inbox and outbox pattern
   - [ ] Consider watermill
 - [ ] Scheduled job orchestration
 - [ ] More descriptive validator, self implement or maybe explore go-playground/validator
-- [ ] Increase test coverage
 - [ ] Improve quality of `_dev/sqlgen/generator.go`
 - [ ] Automate generation of Auditable methods on entities
 - [ ] Taskfile improvements
@@ -89,9 +72,9 @@ Examples can be found in `[domain]_mapdef.go` files, resulting generated file is
   - [ ] Add run commands
   - [ ] Add test commands customized with build tags
     - not as urgent as currently use Goland to run
-- [ ] User activation
-- [ ] User account(auth)
-- [ ] Revise plantUML, completely forgot syntax
+- [ ] Diagrams
+  - Revise plantUML, completely forgot syntax
+- [ ] updater
 - [ ] deleter, add deletedAt nullable and indexing
 - [ ] Improve error structure and packages, there are properties that do the same things
   - ie http status code and error response code
