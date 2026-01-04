@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="go test bigbackend" type="GoTestRunConfiguration" factoryName="Go Test" folderName="test" nameIsGenerated="true">
+    <module name="bigbackend" />
+    <working_directory value="$PROJECT_DIR$" />
+    <go_parameters value="-tags integration -coverpkg=./... -count=1" />
+    <envs>
+      <env name="TZ" value="UTC" />
+    </envs>
+    <kind value="DIRECTORY" />
+    <package value="github.com/dyxj/bigbackend" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$" />
+    <framework value="gotest" />
+    <method v="2" />
+  </configuration>
+</component>
