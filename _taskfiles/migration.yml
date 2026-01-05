@@ -17,6 +17,7 @@ tasks:
         {{.GO_COMMAND}} run {{.MIGRATE_COMMAND}} create -ext sql -dir . -seq {{.name}}
 
   run:
+    dotenv: [.env.local]
     desc: "Run migrations according to _currentMigrationVersion"
     cmds:
       - |

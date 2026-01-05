@@ -10,13 +10,13 @@ import (
 
 func main() {
 	// Parse environment variables
-	cfg, err := config.LoadConfig()
+	cfg, err := config.LoadDBConfig()
 	if err != nil {
 		log.Panicf("failed to load config: %v", err)
 	}
 
 	// Initialize database connection
-	dbConn, err := sqldb.NewDBConn(context.Background(), cfg.DBConfig)
+	dbConn, err := sqldb.NewDBConn(context.Background(), cfg)
 	if err != nil {
 		log.Panicf("failed to connect to database: %v", err)
 	}

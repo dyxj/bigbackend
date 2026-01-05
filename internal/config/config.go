@@ -19,3 +19,15 @@ func LoadConfig() (*Config, error) {
 	}
 	return &cfg, nil
 }
+
+func LoadDBConfig() (*DBConfig, error) {
+	var dbCfg DBConfig
+	err := env.ParseWithOptions(&dbCfg, env.Options{
+		RequiredIfNoDef: true,
+		Prefix:          "DB_",
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &dbCfg, nil
+}
