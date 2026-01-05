@@ -54,17 +54,6 @@ func (s *Server) initServer() {
 
 	router := s.BuildRouter()
 
-	if s.httpConfig.IsDebug() {
-		s.httpServer = &http.Server{
-			Addr:    addr,
-			Handler: router,
-			BaseContext: func(_ net.Listener) context.Context {
-				return s.onGoingCtx
-			},
-		}
-		return
-	}
-
 	s.httpServer = &http.Server{
 		Addr:              addr,
 		ReadHeaderTimeout: s.httpConfig.ReadHeaderTimeout(),
@@ -104,7 +93,7 @@ func (s *Server) listenForStopAndOrchestrateShutdown() {
 	s.isShuttingDown.Store(true)
 
 	// Allow time for readiness probe to pick up the change
-	time.Sleep(s.httpConfig.ReadinessProbeDelay())
+	time.Sleep(s.httpConfig.ShutDownReadyDelay())
 
 	shutDownCtx, shutDownCancel := context.WithTimeout(context.Background(), s.httpConfig.ShutDownTimeout())
 	defer shutDownCancel()

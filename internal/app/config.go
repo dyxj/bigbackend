@@ -3,7 +3,6 @@ package app
 import "time"
 
 type HttpConfig interface {
-	IsDebug() bool
 	Host() string
 	Port() int
 	ReadHeaderTimeout() time.Duration
@@ -13,5 +12,5 @@ type HttpConfig interface {
 
 	ShutDownTimeout() time.Duration
 	ShutDownHardTimeout() time.Duration
-	ReadinessProbeDelay() time.Duration
+	ShutDownReadyDelay() time.Duration
 }

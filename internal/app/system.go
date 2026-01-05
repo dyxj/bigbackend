@@ -22,7 +22,7 @@ func (s *Server) healthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) TimeoutHandler(h http.Handler) http.Handler {
-	if s.httpConfig.HandlerTimeout() <= 0 || s.httpConfig.IsDebug() {
+	if s.httpConfig.HandlerTimeout() <= 0 {
 		return h
 	}
 	return httpx.TimeoutHandler(h, s.httpConfig.HandlerTimeout())
