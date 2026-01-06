@@ -6,14 +6,14 @@ import (
 	"cloud.google.com/go/civil"
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/entity"
-	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/internal/user/profile"
 	"github.com/dyxj/bigbackend/pkg/sqldb"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 )
 
-func UserProfile() userprofile.UserProfile {
-	return userprofile.UserProfile{
+func UserProfile() profile.UserProfile {
+	return profile.UserProfile{
 		ID:          uuid.New(),
 		UserID:      uuid.New(),
 		FirstName:   gofakeit.FirstName(),
@@ -38,8 +38,8 @@ func UserProfileEntity() entity.UserProfile {
 	}
 }
 
-func UserProfileCreateRequest() userprofile.CreateRequest {
-	return userprofile.CreateRequest{
+func UserProfileCreateRequest() profile.CreateRequest {
+	return profile.CreateRequest{
 		UserID:      uuid.New(),
 		FirstName:   gofakeit.FirstName(),
 		LastName:    gofakeit.LastName(),
@@ -65,10 +65,10 @@ type UserProfileCreatorMock struct {
 func (m *UserProfileCreatorMock) CreateUserProfileTx(
 	ctx context.Context,
 	tx sqldb.Executable,
-	input userprofile.UserProfile,
-) (userprofile.UserProfile, error) {
+	input profile.UserProfile,
+) (profile.UserProfile, error) {
 	returnArgs := m.Called(ctx, tx, input)
-	return returnArgs.Get(0).(userprofile.UserProfile), returnArgs.Error(1)
+	return returnArgs.Get(0).(profile.UserProfile), returnArgs.Error(1)
 }
 
 type UserProfileGetterMock struct {
@@ -78,7 +78,7 @@ type UserProfileGetterMock struct {
 func (m *UserProfileGetterMock) GetUserProfileByUserID(
 	ctx context.Context,
 	userID uuid.UUID,
-) (userprofile.UserProfile, error) {
+) (profile.UserProfile, error) {
 	returnArgs := m.Called(ctx, userID)
-	return returnArgs.Get(0).(userprofile.UserProfile), returnArgs.Error(1)
+	return returnArgs.Get(0).(profile.UserProfile), returnArgs.Error(1)
 }

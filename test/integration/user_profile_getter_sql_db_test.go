@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/internal/user/profile"
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/testx"
@@ -28,8 +28,8 @@ func TestSQL_GetUserProfileByUserID(t *testing.T) {
 			truncateUserProfile(dbConn)
 		})
 
-		creator := userprofile.NewCreatorSQLDB(logger)
-		getter := userprofile.NewGetterSQLDB(logger, dbConn)
+		creator := profile.NewCreatorSQLDB(logger)
+		getter := profile.NewGetterSQLDB(logger, dbConn)
 
 		uProfile := faker.UserProfileEntity()
 
@@ -61,7 +61,7 @@ func TestSQL_GetUserProfileByUserID(t *testing.T) {
 			truncateUserProfile(dbConn)
 		})
 
-		getter := userprofile.NewGetterSQLDB(logger, dbConn)
+		getter := profile.NewGetterSQLDB(logger, dbConn)
 
 		_, err := getter.FindUserProfileByUserID(ctx, faker.UserProfile().UserID)
 		if err == nil {

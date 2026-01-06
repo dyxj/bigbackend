@@ -12,7 +12,7 @@ import (
 
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/entity"
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/table"
-	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/internal/user/profile"
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/testx"
@@ -33,7 +33,7 @@ func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
 			truncateUserProfile(dbConn)
 		})
 
-		creator := userprofile.NewCreatorSQLDB(logger)
+		creator := profile.NewCreatorSQLDB(logger)
 
 		tx, err := dbConn.Begin()
 		if err != nil {
@@ -91,7 +91,7 @@ func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
 			truncateUserProfile(dbConn)
 		})
 
-		creator := userprofile.NewCreatorSQLDB(logger)
+		creator := profile.NewCreatorSQLDB(logger)
 
 		tx, err := dbConn.Begin()
 		if err != nil {

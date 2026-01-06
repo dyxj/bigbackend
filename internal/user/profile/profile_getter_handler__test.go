@@ -1,4 +1,4 @@
-package userprofile_test
+package profile_test
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/internal/user/profile"
 	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/test/faker"
@@ -35,9 +35,9 @@ func TestGetterHandler_InternalServerError(t *testing.T) {
 		}
 	}(dbMock)
 
-	mapper := new(userprofile.UserProfileMapper)
+	mapper := new(profile.UserProfileMapper)
 	getterMock := new(faker.UserProfileGetterMock)
-	getterHandler := userprofile.NewGetterHandler(logger, getterMock, mapper)
+	getterHandler := profile.NewGetterHandler(logger, getterMock, mapper)
 
 	userId := uuid.New()
 
@@ -50,7 +50,7 @@ func TestGetterHandler_InternalServerError(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	getterMock.On("GetUserProfileByUserID", mock.Anything, userId).
-		Return(userprofile.UserProfile{}, errors.New("fake error"))
+		Return(profile.UserProfile{}, errors.New("fake error"))
 
 	getterHandler.ServeHTTP(rr, request)
 

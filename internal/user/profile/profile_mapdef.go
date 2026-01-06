@@ -1,4 +1,4 @@
-package userprofile
+package profile
 
 import (
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/entity"

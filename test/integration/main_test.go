@@ -7,14 +7,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/internal/user/profile"
 	"github.com/dyxj/bigbackend/pkg/testx"
 	"go.uber.org/zap"
 )
 
 var (
 	logger                 *zap.Logger
-	userProfileCreatorRepo userprofile.CreatorRepo
+	userProfileCreatorRepo profile.CreatorRepo
 )
 
 func TestMain(m *testing.M) {
@@ -40,7 +40,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Panicf("failed to test initialize logger: %v", err)
 	}
-	userProfileCreatorRepo = userprofile.NewCreatorSQLDB(logger)
+	userProfileCreatorRepo = profile.NewCreatorSQLDB(logger)
 
 	code = m.Run()
 }

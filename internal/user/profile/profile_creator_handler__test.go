@@ -1,4 +1,4 @@
-package userprofile_test
+package profile_test
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/internal/user/profile"
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/logx"
@@ -38,9 +38,9 @@ func TestCreatorHandler_BeginTxError(t *testing.T) {
 	}(dbMock)
 
 	creatorMock := new(faker.UserProfileCreatorMock)
-	mapper := new(userprofile.UserProfileMapper)
+	mapper := new(profile.UserProfileMapper)
 
-	handler := userprofile.NewCreatorHandler(
+	handler := profile.NewCreatorHandler(
 		logger,
 		dbMock,
 		creatorMock,
@@ -112,9 +112,9 @@ func TestCreatorHandler_CreatorValidationError(t *testing.T) {
 	}(dbMock)
 
 	creatorMock := new(faker.UserProfileCreatorMock)
-	mapper := new(userprofile.UserProfileMapper)
+	mapper := new(profile.UserProfileMapper)
 
-	handler := userprofile.NewCreatorHandler(
+	handler := profile.NewCreatorHandler(
 		logger,
 		dbMock,
 		creatorMock,
@@ -141,7 +141,7 @@ func TestCreatorHandler_CreatorValidationError(t *testing.T) {
 		Run(dbMock.ReturnTx)
 
 	creatorMock.On("CreateUserProfileTx", mock.Anything, mock.Anything, mock.Anything).
-		Return(userprofile.UserProfile{}, errors.New("fake unexpected error"))
+		Return(profile.UserProfile{}, errors.New("fake unexpected error"))
 
 	handler.ServeHTTP(rr, request)
 
@@ -185,9 +185,9 @@ func TestCreatorHandler_UnexpectedCreatorError(t *testing.T) {
 	}(dbMock)
 
 	creatorMock := new(faker.UserProfileCreatorMock)
-	mapper := new(userprofile.UserProfileMapper)
+	mapper := new(profile.UserProfileMapper)
 
-	handler := userprofile.NewCreatorHandler(
+	handler := profile.NewCreatorHandler(
 		logger,
 		dbMock,
 		creatorMock,
@@ -214,7 +214,7 @@ func TestCreatorHandler_UnexpectedCreatorError(t *testing.T) {
 		Run(dbMock.ReturnTx)
 
 	creatorMock.On("CreateUserProfileTx", mock.Anything, mock.Anything, mock.Anything).
-		Return(userprofile.UserProfile{}, &errorx.ValidationError{
+		Return(profile.UserProfile{}, &errorx.ValidationError{
 			Properties: map[string]string{"firstName": "fake validation error"},
 		})
 
@@ -260,9 +260,9 @@ func TestCreatorHandler_TxCommitError(t *testing.T) {
 	}(dbMock)
 
 	creatorMock := new(faker.UserProfileCreatorMock)
-	mapper := new(userprofile.UserProfileMapper)
+	mapper := new(profile.UserProfileMapper)
 
-	handler := userprofile.NewCreatorHandler(
+	handler := profile.NewCreatorHandler(
 		logger,
 		dbMock,
 		creatorMock,
@@ -291,7 +291,7 @@ func TestCreatorHandler_TxCommitError(t *testing.T) {
 
 	creatorMock.On("CreateUserProfileTx", mock.Anything, mock.Anything, mock.Anything).
 		Run(func(args mock.Arguments) {
-			input := args.Get(2).(userprofile.UserProfile)
+			input := args.Get(2).(profile.UserProfile)
 			creatorMock.ExpectedCalls[0].ReturnArguments = mock.Arguments{input, nil}
 		})
 

@@ -1,4 +1,4 @@
-package userprofile_test
+package profile_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 
 	"cloud.google.com/go/civil"
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/entity"
-	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/internal/user/profile"
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/test/faker"
@@ -37,10 +37,10 @@ func TestCreator_CreateUserProfileTx_Successfully(t *testing.T) {
 		}).
 		Once()
 
-	creator := userprofile.NewCreator(
+	creator := profile.NewCreator(
 		logger,
 		mockRepo,
-		&userprofile.UserProfileMapper{},
+		&profile.UserProfileMapper{},
 	)
 
 	input := faker.UserProfile()
@@ -66,35 +66,35 @@ func TestCreator_CreateUserProfileTx_ValidationError(t *testing.T) {
 
 	tcc := []struct {
 		name    string
-		inputFn func(input *userprofile.UserProfile)
+		inputFn func(input *profile.UserProfile)
 	}{
 		{
 			name: "missing first name",
-			inputFn: func(input *userprofile.UserProfile) {
+			inputFn: func(input *profile.UserProfile) {
 				input.FirstName = "   "
 			},
 		},
 		{
 			name: "missing last name",
-			inputFn: func(input *userprofile.UserProfile) {
+			inputFn: func(input *profile.UserProfile) {
 				input.LastName = "   "
 			},
 		},
 		{
 			name: "date of birth in the future",
-			inputFn: func(input *userprofile.UserProfile) {
+			inputFn: func(input *profile.UserProfile) {
 				input.DateOfBirth = civil.DateOf(time.Now().Add(time.Hour * 24))
 			},
 		},
 		{
 			name: "zero date of birth",
-			inputFn: func(input *userprofile.UserProfile) {
+			inputFn: func(input *profile.UserProfile) {
 				input.DateOfBirth = civil.Date{}
 			},
 		},
 		{
 			name: "invalid date of birth",
-			inputFn: func(input *userprofile.UserProfile) {
+			inputFn: func(input *profile.UserProfile) {
 				input.DateOfBirth = civil.Date{Year: 2024, Month: 13, Day: 32}
 			},
 		},
@@ -104,10 +104,10 @@ func TestCreator_CreateUserProfileTx_ValidationError(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			mockRepo := new(faker.UserProfileCreatorRepoMock)
 
-			creator := userprofile.NewCreator(
+			creator := profile.NewCreator(
 				logger,
 				mockRepo,
-				&userprofile.UserProfileMapper{},
+				&profile.UserProfileMapper{},
 			)
 
 			input := faker.UserProfile()
@@ -134,10 +134,10 @@ func TestCreator_CreateUserProfileTx_InsertUserProfileError(t *testing.T) {
 		Return(entity.UserProfile{}, &errorx.UniqueViolationError{}).
 		Once()
 
-	creator := userprofile.NewCreator(
+	creator := profile.NewCreator(
 		logger,
 		mockRepo,
-		&userprofile.UserProfileMapper{},
+		&profile.UserProfileMapper{},
 	)
 
 	input := faker.UserProfile()
@@ -147,5 +147,5 @@ func TestCreator_CreateUserProfileTx_InsertUserProfileError(t *testing.T) {
 	mockRepo.AssertNumberOfCalls(t, "InsertUserProfile", 1)
 	var expectedErr *errorx.UniqueViolationError
 	assert.ErrorAs(t, err, &expectedErr)
-	assert.EqualValues(t, userprofile.UserProfile{}, result)
+	assert.EqualValues(t, profile.UserProfile{}, result)
 }

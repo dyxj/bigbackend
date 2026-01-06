@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/internal/user/profile"
 	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/testx"
 	"github.com/dyxj/bigbackend/test/faker"
@@ -26,7 +26,7 @@ func TestUserProfileGetterHandler_Got(t *testing.T) {
 
 	ctx := t.Context()
 
-	creator := userprofile.NewCreatorSQLDB(logger)
+	creator := profile.NewCreatorSQLDB(logger)
 	uProfile := faker.UserProfileEntity()
 	inserted, err := creator.InsertUserProfile(ctx, dbConn, uProfile)
 	if err != nil {
@@ -51,7 +51,7 @@ func TestUserProfileGetterHandler_Got(t *testing.T) {
 			log.Printf("failed to close response body: %v", err)
 		}
 	}()
-	var result userprofile.Response
+	var result profile.Response
 	err = json.NewDecoder(resp.Body).
 		Decode(&result)
 	if err != nil {

@@ -1,21 +1,21 @@
 package app
 
 import (
-	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/internal/user/profile"
 )
 
 func (s *Server) buildUserProfileHandlers() (
-	*userprofile.CreatorHandler,
-	*userprofile.GetterHandler,
+	*profile.CreatorHandler,
+	*profile.GetterHandler,
 ) {
-	mapper := &userprofile.UserProfileMapper{}
+	mapper := &profile.UserProfileMapper{}
 
-	cRepo := userprofile.NewCreatorSQLDB(s.logger)
-	creator := userprofile.NewCreator(s.logger, cRepo, mapper)
+	cRepo := profile.NewCreatorSQLDB(s.logger)
+	creator := profile.NewCreator(s.logger, cRepo, mapper)
 
-	gRepo := userprofile.NewGetterSQLDB(s.logger, s.dbConn)
-	getter := userprofile.NewGetter(s.logger, gRepo, mapper)
+	gRepo := profile.NewGetterSQLDB(s.logger, s.dbConn)
+	getter := profile.NewGetter(s.logger, gRepo, mapper)
 
-	return userprofile.NewCreatorHandler(s.logger, s.dbConn, creator, mapper),
-		userprofile.NewGetterHandler(s.logger, getter, mapper)
+	return profile.NewCreatorHandler(s.logger, s.dbConn, creator, mapper),
+		profile.NewGetterHandler(s.logger, getter, mapper)
 }

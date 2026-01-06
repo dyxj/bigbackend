@@ -13,7 +13,7 @@ import (
 
 	"cloud.google.com/go/civil"
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/entity"
-	"github.com/dyxj/bigbackend/internal/userprofile"
+	"github.com/dyxj/bigbackend/internal/user/profile"
 	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/testx"
 	"github.com/dyxj/bigbackend/test/faker"
@@ -55,7 +55,7 @@ func TestUserProfileCreatorHandler_ShouldCreate(t *testing.T) {
 			log.Printf("failed to close response body: %v", err)
 		}
 	}()
-	var result userprofile.Response
+	var result profile.Response
 	err = json.NewDecoder(resp.Body).
 		Decode(&result)
 	if err != nil {
@@ -84,12 +84,12 @@ func TestUserProfileCreatorHandler_PayloadValidationError(t *testing.T) {
 
 	ttc := []struct {
 		name    string
-		mod     func(*userprofile.CreateRequest)
+		mod     func(*profile.CreateRequest)
 		errResp httpx.ErrorResponse
 	}{
 		{
 			name: "missing user ID",
-			mod: func(r *userprofile.CreateRequest) {
+			mod: func(r *profile.CreateRequest) {
 				r.UserID = uuid.Nil
 			},
 			errResp: httpx.ErrorResponse{
@@ -102,7 +102,7 @@ func TestUserProfileCreatorHandler_PayloadValidationError(t *testing.T) {
 		},
 		{
 			name: "missing first name",
-			mod: func(r *userprofile.CreateRequest) {
+			mod: func(r *profile.CreateRequest) {
 				r.FirstName = ""
 			},
 			errResp: httpx.ErrorResponse{
@@ -115,7 +115,7 @@ func TestUserProfileCreatorHandler_PayloadValidationError(t *testing.T) {
 		},
 		{
 			name: "missing last name",
-			mod: func(r *userprofile.CreateRequest) {
+			mod: func(r *profile.CreateRequest) {
 				r.LastName = ""
 			},
 			errResp: httpx.ErrorResponse{
@@ -128,7 +128,7 @@ func TestUserProfileCreatorHandler_PayloadValidationError(t *testing.T) {
 		},
 		{
 			name: "date of birth in the future",
-			mod: func(input *userprofile.CreateRequest) {
+			mod: func(input *profile.CreateRequest) {
 				input.DateOfBirth = civil.DateOf(time.Now().Add(time.Hour * 24))
 			},
 			errResp: httpx.ErrorResponse{
@@ -192,19 +192,19 @@ func TestUserProfileCreatorHandler_InvalidJsonError(t *testing.T) {
 
 	ttc := []struct {
 		name              string
-		mod               func(*userprofile.CreateRequest)
+		mod               func(*profile.CreateRequest)
 		resultDetailError string
 	}{
 		{
 			name: "zero date of birth",
-			mod: func(input *userprofile.CreateRequest) {
+			mod: func(input *profile.CreateRequest) {
 				input.DateOfBirth = civil.Date{}
 			},
 			resultDetailError: "parsing time \"0000-00-00\": month out of range",
 		},
 		{
 			name: "invalid date of birth",
-			mod: func(input *userprofile.CreateRequest) {
+			mod: func(input *profile.CreateRequest) {
 				input.DateOfBirth = civil.Date{Year: 2024, Month: 13, Day: 32}
 			},
 			resultDetailError: "parsing time \"2024-13-32\": month out of range",
