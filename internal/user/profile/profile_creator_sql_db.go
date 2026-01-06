@@ -33,7 +33,7 @@ func (c *CreatorSQLDB) InsertUserProfile(
 ) (entity.UserProfile, error) {
 	c.logger.Debug("inserting user profile", zap.Any("userId", input.UserID))
 
-	inputAuditable := userProfileAuditableEntity{P: &input}
+	inputAuditable := userProfileAuditableEntity{E: &input}
 	audit.InitInsertFields(inputAuditable)
 
 	stmt := c.buildStatement(input)
