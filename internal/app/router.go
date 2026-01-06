@@ -7,16 +7,12 @@ import (
 
 	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/idempotency"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func (s *Server) BuildRouter() http.Handler {
-	router := http.NewServeMux()
-
-	userProfileCreatorHandler, userProfileGetterHandler := s.buildUserProfileHandlers()
-
-	router.HandleFunc("GET /healthz", s.healthCheck)
-	router.Handle("GET /user/{id}/profile", s.TimeoutHandler(userProfileGetterHandler))
-	router.Handle("POST /user/{id}/profile", s.TimeoutHandler(userProfileCreatorHandler))
+	router := chi.NewRouter()
 
 	idemStore := idempotency.NewMemStore(idempotency.DefaultLockConfig)
 	idemMiddleware := idempotency.NewMiddleware(s.logger, idemStore,
@@ -28,7 +24,23 @@ func (s *Server) BuildRouter() http.Handler {
 		idempotency.WithErrorResponseWriter(s.idempotencyErrResponseWriter),
 	)
 
-	return idemMiddleware.Handler(router)
+	userProfileCreatorHandler, userProfileGetterHandler := s.buildUserProfileHandlers()
+
+	router.Use(middleware.Logger)
+	router.Get("/healthz", s.healthCheck)
+
+	domainRouter := chi.NewRouter()
+
+	domainRouter.Use(s.TimeoutHandler)
+	domainRouter.Use(idemMiddleware.Handler)
+	domainRouter.Use(middleware.Recoverer)
+
+	domainRouter.Get("/user/{id}/profile", userProfileGetterHandler.ServeHTTP)
+	domainRouter.Post("/user/{id}/profile", userProfileCreatorHandler.ServeHTTP)
+
+	router.Mount("/", domainRouter)
+
+	return router
 }
 
 func (s *Server) idempotencyErrResponseWriter(err error, w http.ResponseWriter) {

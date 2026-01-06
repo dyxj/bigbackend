@@ -56,11 +56,6 @@ Checkout `Taskfile.yml` on how to generate mappers.
 Examples can be found in `[domain]_mapdef.go` files, resulting generated file is `[domain]_mapper.go`.
 
 ## Next Steps
-- [ ] Replace mock config with real config, extracting from env vars
-- [ ] Http server
-  - [x] Extract to standalone server instead of main
-  - [ ] Switch to chi router
-  - [ ] Add middleware, crash recovery, tracing
 - [ ] Implement inbox and outbox pattern
   - [ ] Consider watermill
 - [ ] Scheduled job orchestration
@@ -79,3 +74,5 @@ Examples can be found in `[domain]_mapdef.go` files, resulting generated file is
 - [ ] Improve error structure and packages, there are properties that do the same things
   - ie http status code and error response code
   - error are also split in multiple packages, can be done better
+- [ ] HTTP Request logging improvement, formatting can be standardized
+- [ ] Crash recovery improvement, follow existing server standards for response 
