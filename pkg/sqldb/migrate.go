@@ -9,7 +9,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-const _currentMigrationVersion = 1
+const _currentMigrationVersion = 2
 
 func RunMigration(db *sql.DB, migrationFileUrl *string) error {
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
