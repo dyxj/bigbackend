@@ -2,7 +2,6 @@ package profile
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -67,12 +66,7 @@ func (c *CreatorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		httpx.InternalServerErrorResponse("", w)
 		return
 	}
-	defer func() {
-		err := tx.Rollback()
-		if err != nil && !errors.Is(err, sql.ErrTxDone) {
-			c.logger.Error("failed to rollback transaction", zap.Error(err))
-		}
-	}()
+	defer sqldb.TxRollback(tx, c.logger)
 
 	input := c.mapper.CreateRequestToModel(cRequest)
 
