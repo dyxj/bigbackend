@@ -7,6 +7,7 @@ import (
 
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/httpx"
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
@@ -22,7 +23,7 @@ func NewGetterHandler(logger *zap.Logger, getter Getter, mapper Mapper) *GetterH
 }
 
 func (g *GetterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	idStr := r.PathValue("id")
+	idStr := chi.URLParam(r, "id")
 
 	id, err := uuid.Parse(idStr)
 	if err != nil {

@@ -1,6 +1,7 @@
 package profile_test
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
@@ -13,6 +14,7 @@ import (
 	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/test/faker"
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -46,7 +48,12 @@ func TestGetterHandler_InternalServerError(t *testing.T) {
 		"/user/{id}/profile",
 		nil,
 	)
-	request.SetPathValue("id", userId.String())
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("id", userId.String())
+	request = request.WithContext(
+		context.WithValue(request.Context(), chi.RouteCtxKey, rctx),
+	)
+
 	rr := httptest.NewRecorder()
 
 	getterMock.On("GetUserProfileByUserID", mock.Anything, userId).

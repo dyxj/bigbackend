@@ -2,6 +2,7 @@ package profile_test
 
 import (
 	"bytes"
+	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -16,6 +17,7 @@ import (
 	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/test/faker"
+	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -59,7 +61,12 @@ func TestCreatorHandler_BeginTxError(t *testing.T) {
 		"/user/{id}/profile",
 		&buf,
 	)
-	request.SetPathValue("id", payload.UserID.String())
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("id", payload.UserID.String())
+	request = request.WithContext(
+		context.WithValue(request.Context(), chi.RouteCtxKey, rctx),
+	)
+
 	rr := httptest.NewRecorder()
 
 	dbMock.On("BeginTx", mock.Anything, mock.Anything).
@@ -133,7 +140,12 @@ func TestCreatorHandler_CreatorValidationError(t *testing.T) {
 		"/user/{id}/profile",
 		&buf,
 	)
-	request.SetPathValue("id", payload.UserID.String())
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("id", payload.UserID.String())
+	request = request.WithContext(
+		context.WithValue(request.Context(), chi.RouteCtxKey, rctx),
+	)
+
 	rr := httptest.NewRecorder()
 
 	dbMock.SqlMock().ExpectBegin()
@@ -206,7 +218,12 @@ func TestCreatorHandler_UnexpectedCreatorError(t *testing.T) {
 		"/user/{id}/profile",
 		&buf,
 	)
-	request.SetPathValue("id", payload.UserID.String())
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("id", payload.UserID.String())
+	request = request.WithContext(
+		context.WithValue(request.Context(), chi.RouteCtxKey, rctx),
+	)
+
 	rr := httptest.NewRecorder()
 
 	dbMock.SqlMock().ExpectBegin()
@@ -281,7 +298,12 @@ func TestCreatorHandler_TxCommitError(t *testing.T) {
 		"/user/{id}/profile",
 		&buf,
 	)
-	request.SetPathValue("id", payload.UserID.String())
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("id", payload.UserID.String())
+	request = request.WithContext(
+		context.WithValue(request.Context(), chi.RouteCtxKey, rctx),
+	)
+
 	rr := httptest.NewRecorder()
 
 	dbMock.SqlMock().ExpectBegin()

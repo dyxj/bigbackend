@@ -10,6 +10,7 @@ import (
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/sqldb"
+	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 )
 
@@ -51,7 +52,7 @@ func (c *CreatorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId := r.PathValue("id")
+	userId := chi.URLParam(r, "id")
 	if userId != cRequest.UserID.String() {
 		c.logger.Warn("user ID in URL does not match user ID in request body",
 			zap.String("urlUserId", userId),
