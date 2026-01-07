@@ -1,7 +1,8 @@
 # Custom
+bigbackend
 _dev/bigbackend-database
-.idea/copilotDiffState.xml
 .idea/dataSources.xml
+.idea/copilot*
 
 # Created by https://www.toptal.com/developers/gitignore/api/go,goland
 # Edit at https://www.toptal.com/developers/gitignore?templates=go,goland
