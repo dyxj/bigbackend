@@ -9,6 +9,11 @@ import (
 
 type UserInvitationMapper struct{}
 
+func (c *UserInvitationMapper) CreateRequestToModel(source CreateRequest) UserInvitation {
+	var invitationUserInvitation UserInvitation
+	invitationUserInvitation.Email = source.Email
+	return invitationUserInvitation
+}
 func (c *UserInvitationMapper) EntityToModel(source entity.UserInvitation) UserInvitation {
 	var invitationUserInvitation UserInvitation
 	invitationUserInvitation.ID = mapx.MapUUID(source.ID)

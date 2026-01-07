@@ -11,31 +11,64 @@ import (
 	"go.uber.org/zap"
 )
 
+type createConfig struct {
+	defaultExpiryDuration time.Duration
+	invitationURL         string
+}
+
+type CreateOption func(*createConfig)
+
+func CreateOptDefaultExpiryDuration(d time.Duration) CreateOption {
+	return func(c *createConfig) {
+		c.defaultExpiryDuration = d
+	}
+}
+
+func CreateOptInvitationURL(invitationURL string) CreateOption {
+	return func(c *createConfig) {
+		c.invitationURL = invitationURL
+	}
+}
+
 const sysDefaultExpiryDuration = time.Hour * 24
+const sysDefaultInvitationURL = "http://localhost:8080/invitation?token="
 
 type creator struct {
-	logger                *zap.Logger
-	creatorRepo           CreatorRepo
-	mapper                Mapper
-	defaultExpiryDuration time.Duration
+	logger      *zap.Logger
+	tm          sqldb.TransactionManager
+	creatorRepo CreatorRepo
+	mapper      Mapper
+	publisher   EventPublisher
+	expirer     Expirer
+	cfg         createConfig
 }
 
 func NewCreator(
 	logger *zap.Logger,
+	tm sqldb.TransactionManager,
 	creatorRepo CreatorRepo,
 	mapper Mapper,
-	defaultExpiryDuration time.Duration,
+	publisher EventPublisher,
+	expirer Expirer,
+	option ...CreateOption,
 ) Creator {
-	if defaultExpiryDuration <= 0 {
-		defaultExpiryDuration = sysDefaultExpiryDuration
+	cfg := createConfig{
+		defaultExpiryDuration: sysDefaultExpiryDuration,
+		invitationURL:         sysDefaultInvitationURL,
 	}
+
+	for _, opt := range option {
+		opt(&cfg)
+	}
+
 	return &creator{
-		logger: logger, creatorRepo: creatorRepo, mapper: mapper, defaultExpiryDuration: defaultExpiryDuration,
+		logger: logger, tm: tm, creatorRepo: creatorRepo, mapper: mapper,
+		publisher: publisher, expirer: expirer, cfg: cfg,
 	}
 }
 
-func (c *creator) CreateUserInvitationTx(
-	ctx context.Context, tx sqldb.Executable, input UserInvitation,
+func (c *creator) CreateUserInvitation(
+	ctx context.Context, input UserInvitation,
 ) (UserInvitation, error) {
 
 	isValid := input.IsValidForCreate()
@@ -43,9 +76,23 @@ func (c *creator) CreateUserInvitationTx(
 		return UserInvitation{}, &errorx.ValidationError{}
 	}
 
-	input.ExpiryTime = time.Now().Add(c.defaultExpiryDuration)
+	input.ExpiryTime = time.Now().Add(c.cfg.defaultExpiryDuration)
 	input.StatusRaw = StatusPending
 	input.Token = uuid.New().String()
+
+	// TODO check if account is created for email
+
+	tx, err := c.tm.BeginTx(ctx, nil)
+	if err != nil {
+		c.logger.Error("failed to begin transaction", zap.Error(err))
+		return UserInvitation{}, err
+	}
+	defer sqldb.TxRollback(tx, c.logger)
+
+	err = c.expirer.ExpireInvitationsByEmailTx(ctx, tx, input.Email)
+	if err != nil {
+		return UserInvitation{}, err
+	}
 
 	entityInput := c.mapper.ModelToEntity(input)
 	createdEntity, err := c.creatorRepo.InsertUserInvitation(ctx, tx, entityInput)
@@ -53,15 +100,34 @@ func (c *creator) CreateUserInvitationTx(
 		return UserInvitation{}, err
 	}
 
+	err = c.publisher.Publish(ctx, tx)
+	if err != nil {
+		return UserInvitation{}, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		c.logger.Error("failed to commit transaction", zap.Error(err))
+		return UserInvitation{}, err
+	}
+
 	return c.mapper.EntityToModel(createdEntity), nil
 }
 
 type Creator interface {
-	CreateUserInvitationTx(ctx context.Context, tx sqldb.Executable, input UserInvitation) (UserInvitation, error)
+	CreateUserInvitation(ctx context.Context, input UserInvitation) (UserInvitation, error)
 }
 
 type CreatorRepo interface {
 	InsertUserInvitation(
 		ctx context.Context, tx sqldb.Executable, input entity.UserInvitation,
 	) (entity.UserInvitation, error)
+}
+
+type EventPublisher interface {
+	Publish(ctx context.Context, tx sqldb.Executable) error
+}
+
+type Expirer interface {
+	ExpireInvitationsByEmailTx(ctx context.Context, tx sqldb.Executable, email string) error
 }

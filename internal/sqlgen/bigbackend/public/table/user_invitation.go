@@ -28,6 +28,7 @@ type userInvitationTable struct {
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
+	DefaultColumns postgres.ColumnList
 }
 
 type UserInvitationTable struct {
@@ -75,6 +76,7 @@ func newUserInvitationTableImpl(schemaName, tableName, alias string) userInvitat
 		VersionColumn    = postgres.IntegerColumn("version")
 		allColumns       = postgres.ColumnList{IDColumn, EmailColumn, StatusColumn, ExpiryTimeColumn, TokenColumn, CreateTimeColumn, UpdateTimeColumn, VersionColumn}
 		mutableColumns   = postgres.ColumnList{EmailColumn, StatusColumn, ExpiryTimeColumn, TokenColumn, CreateTimeColumn, UpdateTimeColumn, VersionColumn}
+		defaultColumns   = postgres.ColumnList{}
 	)
 
 	return userInvitationTable{
@@ -92,5 +94,6 @@ func newUserInvitationTableImpl(schemaName, tableName, alias string) userInvitat
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

@@ -28,6 +28,7 @@ type userProfileTable struct {
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
+	DefaultColumns postgres.ColumnList
 }
 
 type UserProfileTable struct {
@@ -75,6 +76,7 @@ func newUserProfileTableImpl(schemaName, tableName, alias string) userProfileTab
 		VersionColumn     = postgres.IntegerColumn("version")
 		allColumns        = postgres.ColumnList{IDColumn, UserIDColumn, FirstNameColumn, LastNameColumn, DateOfBirthColumn, CreateTimeColumn, UpdateTimeColumn, VersionColumn}
 		mutableColumns    = postgres.ColumnList{UserIDColumn, FirstNameColumn, LastNameColumn, DateOfBirthColumn, CreateTimeColumn, UpdateTimeColumn, VersionColumn}
+		defaultColumns    = postgres.ColumnList{}
 	)
 
 	return userProfileTable{
@@ -92,5 +94,6 @@ func newUserProfileTableImpl(schemaName, tableName, alias string) userProfileTab
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

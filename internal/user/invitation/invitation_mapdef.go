@@ -12,4 +12,6 @@ type Mapper interface {
 	ModelToEntity(source UserInvitation) entity.UserInvitation
 	// goverter:map Status StatusRaw
 	EntityToModel(source entity.UserInvitation) UserInvitation
+	// goverter:ignoreMissing
+	CreateRequestToModel(source CreateRequest) UserInvitation
 }

@@ -6,10 +6,18 @@ import (
 )
 
 func truncateUserProfile(dbConn *sql.DB) {
-	log.Printf("truncating user_profile table")
-	_, err := dbConn.Exec("TRUNCATE TABLE user_profile CASCADE;")
+	truncateTable(dbConn, "user_profile")
+}
+
+func truncateUserInvitation(dbConn *sql.DB) {
+	truncateTable(dbConn, "user_invitation")
+}
+
+func truncateTable(dbConn *sql.DB, tableName string) {
+	log.Printf("truncating %s table", tableName)
+	_, err := dbConn.Exec("TRUNCATE TABLE " + tableName + " CASCADE;")
 	if err != nil {
-		log.Printf("failed to truncate user_profile table: %v", err)
+		log.Printf("failed to truncate %s table: %v", tableName, err)
 		return
 	}
 }

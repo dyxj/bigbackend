@@ -3,6 +3,7 @@ package invitation
 import (
 	"time"
 
+	"github.com/dyxj/bigbackend/pkg/validx"
 	"github.com/google/uuid"
 )
 
@@ -48,6 +49,5 @@ func (u *UserInvitation) IsValidForCreate() bool {
 }
 
 func (u *UserInvitation) IsValid() bool {
-	return u.Email != "" &&
-		u.Token != ""
+	return validx.IsEmail(u.Email)
 }

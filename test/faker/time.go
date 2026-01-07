@@ -10,3 +10,8 @@ func pastDate() time.Time {
 	duration := time.Duration(24 * gofakeit.IntRange(1, 50))
 	return time.Now().Add(time.Hour * -duration)
 }
+
+func futureDate() time.Time {
+	duration := time.Duration(24 * gofakeit.IntRange(1, 50))
+	return time.Now().Add(time.Hour * duration)
+}

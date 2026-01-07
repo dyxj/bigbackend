@@ -6,6 +6,7 @@ import (
 )
 
 var ErrNotFound = errors.New("not found")
+var ErrConflict = errors.New("conflict")
 
 const validationErrorPrefix = "validation error"
 const uniqueViolationErrorPrefix = "unique violation error"
