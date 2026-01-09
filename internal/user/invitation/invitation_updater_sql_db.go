@@ -7,6 +7,7 @@ import (
 
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/entity"
 	"github.com/dyxj/bigbackend/internal/sqlgen/bigbackend/public/table"
+	"github.com/dyxj/bigbackend/pkg/audit"
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/sqldb"
 	"github.com/go-jet/jet/v2/postgres"
@@ -27,6 +28,9 @@ func NewUpdaterSQLDB(logger *zap.Logger) *UpdaterSQLDB {
 func (u *UpdaterSQLDB) UpdateInvitationTx(
 	ctx context.Context, tx sqldb.Queryable, input entity.UserInvitation,
 ) (entity.UserInvitation, error) {
+
+	iAuditable := userInvitationAuditableEntity{E: &input}
+	audit.SetUpdateFields(iAuditable)
 
 	stmt := table.UserInvitation.
 		UPDATE(
@@ -75,12 +79,12 @@ func (u *UpdaterSQLDB) BatchUpdateInvitationTx(
 	uId := postgres.StringColumn("id")
 	uEmail := postgres.StringColumn("email")
 	uStatus := postgres.StringColumn("status")
-	uExpiry := postgres.TimestampzColumn("expiry")
+	uExpiryTime := postgres.TimestampzColumn("expiry_time")
 	uToken := postgres.StringColumn("token")
 	uOldVersion := postgres.IntegerColumn("old_version")
 
 	updateData := postgres.VALUES(rows...).
-		AS("u", uId, uEmail, uStatus, uExpiry, uToken, uOldVersion)
+		AS("u", uId, uEmail, uStatus, uExpiryTime, uToken, uOldVersion)
 
 	now := time.Now()
 
@@ -89,7 +93,7 @@ func (u *UpdaterSQLDB) BatchUpdateInvitationTx(
 		SET(
 			table.UserInvitation.Email.SET(uEmail),
 			table.UserInvitation.Status.SET(uStatus),
-			table.UserInvitation.ExpiryTime.SET(uExpiry),
+			table.UserInvitation.ExpiryTime.SET(uExpiryTime),
 			table.UserInvitation.Version.SET(
 				table.UserInvitation.Version.ADD(postgres.Int32(1)),
 			),
