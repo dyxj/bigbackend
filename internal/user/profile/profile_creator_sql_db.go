@@ -34,7 +34,7 @@ func (c *CreatorSQLDB) InsertUserProfile(
 	c.logger.Debug("inserting user profile", zap.Any("userId", input.UserID))
 
 	inputAuditable := userProfileAuditableEntity{E: &input}
-	audit.InitInsertFields(inputAuditable)
+	audit.SetInsertFields(inputAuditable)
 
 	stmt := c.buildStatement(input)
 

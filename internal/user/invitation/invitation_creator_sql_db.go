@@ -33,7 +33,7 @@ func (c *CreatorSQLDB) InsertUserInvitation(
 	c.logger.Debug("inserting user invitation", zap.Any("email", input.Email))
 
 	inputAuditable := userInvitationAuditableEntity{E: &input}
-	audit.InitInsertFields(inputAuditable)
+	audit.SetInsertFields(inputAuditable)
 
 	stmt := c.buildStatement(input)
 

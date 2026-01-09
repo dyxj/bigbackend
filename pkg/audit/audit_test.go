@@ -32,7 +32,7 @@ func TestInitInsertFields(t *testing.T) {
 		entity := &RandomEntity{Message: "hello"}
 		auditable := RandomEntityAuditable{P: entity}
 
-		InitInsertFields(auditable)
+		SetInsertFields(auditable)
 
 		assert.NotEqual(t, uuid.Nil, auditable.P.ID)
 		assert.WithinDuration(t, time.Now(), auditable.P.CreateTime, time.Second)
@@ -45,7 +45,7 @@ func TestInitInsertFields(t *testing.T) {
 		entity := &RandomEntity{ID: existingID, Message: "world"}
 		auditable := RandomEntityAuditable{P: entity}
 
-		InitInsertFields(auditable)
+		SetInsertFields(auditable)
 
 		assert.NotEqual(t, existingID, auditable.P.ID)
 		assert.WithinDuration(t, time.Now(), auditable.P.CreateTime, time.Second)
@@ -65,7 +65,7 @@ func TestInitUpdateFields(t *testing.T) {
 		}
 		auditable := RandomEntityAuditable{P: entity}
 
-		InitUpdateFields(auditable)
+		SetUpdateFields(auditable)
 
 		assert.WithinDuration(t, time.Now(), auditable.P.UpdateTime, time.Second)
 		assert.Equal(t, int32(3), auditable.P.Version)

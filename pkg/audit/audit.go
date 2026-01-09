@@ -15,7 +15,7 @@ type Auditable interface {
 	SetVersion(int32)
 }
 
-func InitInsertFields[T Auditable](t T) {
+func SetInsertFields[T Auditable](t T) {
 	now := time.Now()
 
 	t.SetID(uuid.New())
@@ -24,7 +24,7 @@ func InitInsertFields[T Auditable](t T) {
 	t.SetVersion(1)
 }
 
-func InitUpdateFields[T Auditable](t T) {
+func SetUpdateFields[T Auditable](t T) {
 	t.SetUpdateTime(time.Now())
 	t.SetVersion(t.GetVersion() + 1)
 }
