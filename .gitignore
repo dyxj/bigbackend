@@ -4,6 +4,8 @@ _dev/bigbackend-database
 .idea/dataSources.xml
 .idea/copilot*
 
+.DS_Store
+
 # Created by https://www.toptal.com/developers/gitignore/api/go,goland
 # Edit at https://www.toptal.com/developers/gitignore?templates=go,goland
 
