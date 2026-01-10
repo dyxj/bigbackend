@@ -80,8 +80,6 @@ func (c *creator) CreateUserInvitation(
 	input.StatusRaw = StatusPending
 	input.Token = uuid.New().String()
 
-	// TODO check if account is created for email
-
 	tx, err := c.tm.BeginTx(ctx, nil)
 	if err != nil {
 		c.logger.Error("failed to begin transaction", zap.Error(err))
