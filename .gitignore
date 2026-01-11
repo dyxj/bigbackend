@@ -3,6 +3,7 @@ bigbackend
 _dev/bigbackend-database
 .idea/dataSources.xml
 .idea/copilot*
+.idea/sqldialects.xml
 
 .DS_Store
 
