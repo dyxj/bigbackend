@@ -78,7 +78,7 @@ func TestUpdaterSQLDBUserInvitation_BatchUpdateInvitationTx(t *testing.T) {
 		assert.Equal(t, int32(2), result2.Version)
 	})
 
-	t.Run("should abort update", func(t *testing.T) {
+	t.Run("should abort update if any failed", func(t *testing.T) {
 		ctx := t.Context()
 		t.Cleanup(func() {
 			truncateUserInvitation(dbConn)
