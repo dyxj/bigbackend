@@ -1,0 +1,36 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/dyxj/bigbackend/test/integration
+cpu: Apple M1 Pro
+                                                   │     Single     │                Batch                │
+                                                   │     sec/op     │    sec/op     vs base               │
+UpdaterSQLDBUserInvitation_Multiple/BatchSize1-8       2.039m ± ∞ ¹   2.251m ± ∞ ¹  +10.37% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize5-8      12.121m ± ∞ ¹   3.119m ± ∞ ¹  -74.27% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize10-8     18.615m ± ∞ ¹   2.648m ± ∞ ¹  -85.77% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize25-8     49.198m ± ∞ ¹   4.568m ± ∞ ¹  -90.71% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize50-8     95.014m ± ∞ ¹   5.441m ± ∞ ¹  -94.27% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize100-8   204.411m ± ∞ ¹   9.093m ± ∞ ¹  -95.55% (p=1.000 n=1)
+geomean                                                27.58m         4.017m        -85.43%
+¹ need >= 6 samples for confidence interval at level 0.95
+
+                                                   │     Single     │                Batch                 │
+                                                   │      B/op      │     B/op       vs base               │
+UpdaterSQLDBUserInvitation_Multiple/BatchSize1-8      20.86Ki ± ∞ ¹   27.66Ki ± ∞ ¹  +32.61% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize5-8     104.09Ki ± ∞ ¹   56.85Ki ± ∞ ¹  -45.38% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize10-8    208.14Ki ± ∞ ¹   93.14Ki ± ∞ ¹  -55.25% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize25-8     520.0Ki ± ∞ ¹   214.5Ki ± ∞ ¹  -58.75% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize50-8    1039.8Ki ± ∞ ¹   401.6Ki ± ∞ ¹  -61.38% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize100-8   2081.0Ki ± ∞ ¹   820.8Ki ± ∞ ¹  -60.56% (p=1.000 n=1)
+geomean                                               282.5Ki         147.6Ki        -47.74%
+¹ need >= 6 samples for confidence interval at level 0.95
+
+                                                   │    Single     │                Batch                │
+                                                   │   allocs/op   │  allocs/op    vs base               │
+UpdaterSQLDBUserInvitation_Multiple/BatchSize1-8       379.0 ± ∞ ¹    513.0 ± ∞ ¹  +35.36% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize5-8      1.897k ± ∞ ¹   1.016k ± ∞ ¹  -46.44% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize10-8     3.795k ± ∞ ¹   1.638k ± ∞ ¹  -56.84% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize25-8     9.484k ± ∞ ¹   3.547k ± ∞ ¹  -62.60% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize50-8    18.967k ± ∞ ¹   6.779k ± ∞ ¹  -64.26% (p=1.000 n=1)
+UpdaterSQLDBUserInvitation_Multiple/BatchSize100-8    37.95k ± ∞ ¹   13.24k ± ∞ ¹  -65.11% (p=1.000 n=1)
+geomean                                               5.148k         2.545k        -50.57%
+¹ need >= 6 samples for confidence interval at level 0.95

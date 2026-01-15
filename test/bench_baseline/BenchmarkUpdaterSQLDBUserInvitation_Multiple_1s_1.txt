@@ -1,0 +1,27 @@
+test-env-global 2026/01/15 23:43:03 starting environment
+test-env-global 2026/01/15 23:43:03 setup db container
+test-env-global 2026/01/15 23:43:04 setup db connection
+2026/01/15 23:43:04 test environment is ready
+goos: darwin
+goarch: arm64
+pkg: github.com/dyxj/bigbackend/test/integration
+cpu: Apple M1 Pro
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize1-8         	     502	   2039324 ns/op	   21361 B/op	     379 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize1-8          	     547	   2250884 ns/op	   28327 B/op	     513 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize5-8         	     100	  12121280 ns/op	  106591 B/op	    1897 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize5-8          	     494	   3118731 ns/op	   58217 B/op	    1016 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize10-8        	      57	  18615124 ns/op	  213137 B/op	    3795 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize10-8         	     441	   2648343 ns/op	   95379 B/op	    1638 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize25-8        	      26	  49197846 ns/op	  532480 B/op	    9484 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize25-8         	     253	   4568257 ns/op	  219655 B/op	    3547 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize50-8        	      12	  95014201 ns/op	 1064772 B/op	   18967 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize50-8         	     206	   5441265 ns/op	  411211 B/op	    6779 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize100-8       	       5	 204410583 ns/op	 2130902 B/op	   37946 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize100-8        	     130	   9092901 ns/op	  840487 B/op	   13241 allocs/op
+PASS
+test-env-global 2026/01/15 23:45:21 closing environment
+test-env-global 2026/01/15 23:45:21 close http test server
+test-env-global 2026/01/15 23:45:21 close db connection
+test-env-global 2026/01/15 23:45:21 teardown db container
+test-env-global 2026/01/15 23:45:21 environment closed
+ok  	github.com/dyxj/bigbackend/test/integration	141.199s

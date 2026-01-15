@@ -1,0 +1,75 @@
+test-env-global 2026/01/15 15:52:01 starting environment
+test-env-global 2026/01/15 15:52:01 setup db container
+test-env-global 2026/01/15 15:52:03 setup db connection
+2026/01/15 15:52:03 test environment is ready
+goos: darwin
+goarch: arm64
+pkg: github.com/dyxj/bigbackend/test/integration
+cpu: Apple M1 Pro
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize1-8         	    1422	   2538675 ns/op	   21343 B/op	     379 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize1-8         	    1645	   2323298 ns/op	   21330 B/op	     379 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize1-8         	    1814	   2006232 ns/op	   21313 B/op	     379 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize1-8         	    1819	   2793429 ns/op	   21322 B/op	     379 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize1-8         	    1208	   2853600 ns/op	   21322 B/op	     379 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize1-8          	    1188	   3601406 ns/op	   28326 B/op	     513 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize1-8          	    1171	   3408679 ns/op	   28320 B/op	     513 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize1-8          	    1138	   3139114 ns/op	   28323 B/op	     513 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize1-8          	    1394	   2714344 ns/op	   28328 B/op	     513 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize1-8          	    1290	   2971006 ns/op	   28320 B/op	     513 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize5-8         	     222	  15094427 ns/op	  106581 B/op	    1897 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize5-8         	     280	  14979200 ns/op	  106609 B/op	    1897 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize5-8         	     210	  15569247 ns/op	  106578 B/op	    1897 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize5-8         	     232	  13559189 ns/op	  106582 B/op	    1897 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize5-8         	     214	  14601482 ns/op	  106578 B/op	    1897 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize5-8          	    1123	   3093726 ns/op	   58182 B/op	    1015 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize5-8          	    1252	   3351502 ns/op	   58188 B/op	    1015 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize5-8          	    1267	   2467694 ns/op	   58204 B/op	    1015 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize5-8          	    1345	   2479521 ns/op	   58195 B/op	    1015 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize5-8          	    1690	   2589623 ns/op	   58190 B/op	    1015 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize10-8        	     174	  21407400 ns/op	  213154 B/op	    3795 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize10-8        	     189	  20667241 ns/op	  213043 B/op	    3794 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize10-8        	     175	  19355504 ns/op	  213013 B/op	    3793 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize10-8        	     182	  20834918 ns/op	  213082 B/op	    3794 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize10-8        	     184	  19194800 ns/op	  213033 B/op	    3794 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize10-8         	    1237	   3085389 ns/op	   95336 B/op	    1638 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize10-8         	    1306	   2869148 ns/op	   95325 B/op	    1638 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize10-8         	    1326	   2890524 ns/op	   95316 B/op	    1637 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize10-8         	    1220	   2876190 ns/op	   95330 B/op	    1638 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize10-8         	    1310	   3795916 ns/op	   95323 B/op	    1638 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize25-8        	      68	  58240326 ns/op	  532994 B/op	    9489 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize25-8        	      66	  63549735 ns/op	  532802 B/op	    9485 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize25-8        	      64	  61435836 ns/op	  533013 B/op	    9489 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize25-8        	      70	  55566016 ns/op	  532672 B/op	    9486 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize25-8        	      74	  47959426 ns/op	  532485 B/op	    9484 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize25-8         	     796	   4202639 ns/op	  219666 B/op	    3547 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize25-8         	     850	   5065358 ns/op	  219674 B/op	    3547 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize25-8         	     861	   4272816 ns/op	  219661 B/op	    3547 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize25-8         	     940	   4044551 ns/op	  219666 B/op	    3547 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize25-8         	     735	   4278033 ns/op	  219676 B/op	    3547 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize50-8        	      34	 102671185 ns/op	 1065582 B/op	   18974 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize50-8        	      36	 111664139 ns/op	 1065489 B/op	   18973 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize50-8        	      33	 123987024 ns/op	 1065700 B/op	   18975 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize50-8        	      33	 121445730 ns/op	 1065595 B/op	   18974 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize50-8        	      26	 131740111 ns/op	 1066154 B/op	   18979 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize50-8         	     630	   5795284 ns/op	  411253 B/op	    6779 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize50-8         	     621	   6694638 ns/op	  411214 B/op	    6779 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize50-8         	     538	   5898690 ns/op	  411219 B/op	    6779 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize50-8         	     554	   5875556 ns/op	  411223 B/op	    6779 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize50-8         	     699	   5617151 ns/op	  411236 B/op	    6779 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize100-8       	      18	 239752463 ns/op	 2131044 B/op	   37948 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize100-8       	      15	 241744572 ns/op	 2131601 B/op	   37953 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize100-8       	      15	 227376997 ns/op	 2130776 B/op	   37946 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize100-8       	      16	 223673154 ns/op	 2131357 B/op	   37950 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Single/BatchSize100-8       	      18	 192237669 ns/op	 2130208 B/op	   37940 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize100-8        	     379	   8983522 ns/op	  840380 B/op	   13239 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize100-8        	     331	   9171028 ns/op	  840418 B/op	   13240 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize100-8        	     367	   9146889 ns/op	  840428 B/op	   13240 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize100-8        	     344	   9112078 ns/op	  840431 B/op	   13240 allocs/op
+BenchmarkUpdaterSQLDBUserInvitation_Multiple/method=Batch/BatchSize100-8        	     411	   9745301 ns/op	  840408 B/op	   13239 allocs/op
+PASS
+test-env-global 2026/01/15 16:22:57 closing environment
+test-env-global 2026/01/15 16:22:57 close http test server
+test-env-global 2026/01/15 16:22:57 close db connection
+test-env-global 2026/01/15 16:22:57 teardown db container
+test-env-global 2026/01/15 16:22:57 environment closed
+ok  	github.com/dyxj/bigbackend/test/integration	1856.938s
