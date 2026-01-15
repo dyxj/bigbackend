@@ -29,6 +29,7 @@ func (u *UpdaterSQLDB) UpdateInvitationTx(
 	ctx context.Context, tx sqldb.Queryable, input entity.UserInvitation,
 ) (entity.UserInvitation, error) {
 
+	oldVersion := input.Version
 	iAuditable := userInvitationAuditableEntity{E: &input}
 	audit.SetUpdateFields(iAuditable)
 
@@ -40,7 +41,7 @@ func (u *UpdaterSQLDB) UpdateInvitationTx(
 		MODEL(input).
 		WHERE(postgres.AND(
 			table.UserInvitation.ID.EQ(postgres.UUID(input.ID)),
-			table.UserInvitation.Version.EQ(postgres.Int32(input.Version)),
+			table.UserInvitation.Version.EQ(postgres.Int32(oldVersion)),
 		)).
 		RETURNING(table.UserInvitation.AllColumns)
 
