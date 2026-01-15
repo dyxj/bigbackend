@@ -14,7 +14,6 @@ func truncateUserInvitation(dbConn *sql.DB) {
 }
 
 func truncateTable(dbConn *sql.DB, tableName string) {
-	log.Printf("truncating %s table", tableName)
 	_, err := dbConn.Exec("TRUNCATE TABLE " + tableName + " CASCADE;")
 	if err != nil {
 		log.Printf("failed to truncate %s table: %v", tableName, err)
