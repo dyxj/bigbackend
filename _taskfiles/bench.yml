@@ -1,0 +1,46 @@
+version: '3'
+
+vars:
+  GO_COMMAND: go
+
+tasks:
+  run:
+    #benchtime guidelines:
+    #
+    #1-3s: Good for quick feedback during development
+    #3-10s: Better statistical significance, more stable results
+    #>10s: Diminishing returns, takes too long
+    #
+    #Fast operations (< 1ms): Use 3s-5s to get enough iterations
+    #Slow operations (> 100ms): Use 1s-3s since you'll get fewer but meaningful iterations
+    #Database benchmarks: 3s-5s is a sweet spot
+    #
+    #count guidelines:
+    #
+    #count=1: No statistical confidence, one-off results
+    #count=3-5: Good balance, can detect outliers
+    #count=5-10: Better for statistical analysis, more reliable
+    #count=10+: Overkill for most cases, takes too long
+    #
+    #Development/quick tests: count=1-3
+    #Comparing implementations: count=5
+    #Production benchmarks: count=10+
+    #CI/CD pipelines: count=3-5 (balance between reliability and time)
+    desc: "Run benchmark {{.name}} with optional benchtime={{.benchtime}} and count={{.count}}"
+    requires:
+      vars: [ name ]
+    vars:
+      name: "{{.name}}"
+      benchtime: '{{.benchtime | default "1s"}}'
+      count: '{{.count | default "1"}}'
+      fname: '{{.name | replace "/" "_"}}'
+    cmds:
+      - |
+        env $(grep -v '^#' .env.local | xargs) {{.GO_COMMAND}} test -bench='{{.name}}' \
+        -run=^$ \
+        -benchmem \
+        -benchtime={{.benchtime}} \
+        -count={{.count}} \
+        -tags=integration \
+        ./test/integration/ \
+        > test/bench_result/{{.fname}}_{{.benchtime}}_{{.count}}.txt

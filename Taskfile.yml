@@ -9,6 +9,7 @@ includes:
   mig: ./_taskfiles/migration.yml
   sqlgen: ./_taskfiles/sqlgen.yml
   map: ./_taskfiles/map.yml
+  bench: ./_taskfiles/bench.yml
 
 tasks:
   default:
