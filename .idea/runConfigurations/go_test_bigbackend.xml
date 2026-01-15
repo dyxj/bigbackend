@@ -2,10 +2,21 @@
   <configuration default="false" name="go test bigbackend" type="GoTestRunConfiguration" factoryName="Go Test" folderName="test" nameIsGenerated="true">
     <module name="bigbackend" />
     <working_directory value="$PROJECT_DIR$" />
-    <go_parameters value="-tags integration -coverpkg=./... -count=1" />
+    <go_parameters value="-tags=&quot;integration&quot; -coverpkg=./... -count=1" />
     <envs>
       <env name="TZ" value="UTC" />
     </envs>
+    <EXTENSION ID="net.ashald.envfile">
+      <option name="IS_ENABLED" value="true" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env.local" />
+      </ENTRIES>
+    </EXTENSION>
     <kind value="DIRECTORY" />
     <package value="github.com/dyxj/bigbackend" />
     <directory value="$PROJECT_DIR$" />
