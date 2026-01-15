@@ -2,10 +2,11 @@
 
 Backend services built with my current preferences.  
 Mainly a repo for me to refer to things I forget over time.  
+It is still a work in progress.
 
 ## Notes
 It should be noted, not all projects require such levels of abstractions and layers, just covering all scenarios.  
-The intent is also to cover microservices scenarios, however written in repo for ease of reference.
+The intent is also to cover microservices scenarios, however written in a single repo for ease of reference.
 
 ## Dev Tools
 - Docker and docker compose, should come together with Docker Desktop
@@ -54,25 +55,3 @@ Check out `Taskfile.yml` on how to generate models and sql builders.
 [goverter](https://github.com/jmattheis/goverter) is used to generate mappers between different layers.  
 Checkout `Taskfile.yml` on how to generate mappers.  
 Examples can be found in `[domain]_mapdef.go` files, resulting generated file is `[domain]_mapper.go`.
-
-## Next Steps
-- [ ] Implement inbox and outbox pattern
-  - [ ] Consider watermill
-- [ ] Scheduled job orchestration
-- [ ] More descriptive validator, self implement or maybe explore go-playground/validator
-- [ ] Improve quality of `_dev/sqlgen/generator.go`
-- [ ] Automate generation of Auditable methods on entities
-- [ ] Taskfile improvements
-  - [ ] Move DB up and down sub command
-  - [ ] Add run commands
-  - [ ] Add test commands customized with build tags
-    - not as urgent as currently use Goland to run
-- [ ] Diagrams
-  - Revise plantUML, completely forgot syntax
-- [ ] updater
-- [ ] deleter, add deletedAt nullable and indexing
-- [ ] Improve error structure and packages, there are properties that do the same things
-  - ie http status code and error response code
-  - error are also split in multiple packages, can be done better
-- [ ] HTTP Request logging improvement, formatting can be standardized
-- [ ] Crash recovery improvement, follow existing server standards for response 
