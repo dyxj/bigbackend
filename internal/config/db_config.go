@@ -1,11 +1,11 @@
 package config
 
 type DBConfig struct {
-	HostEV     string `env:"HOST"`
-	PortEV     int    `env:"PORT"`
-	UserEV     string `env:"USER"`
-	PasswordEV string `env:"PASSWORD"`
-	DBNameEV   string `env:"NAME"`
+	HostEV     string `env:"DB_HOST"`
+	PortEV     int    `env:"DB_PORT"`
+	UserEV     string `env:"DB_USER"`
+	PasswordEV string `env:"DB_PASSWORD"`
+	DBNameEV   string `env:"DB_NAME"`
 }
 
 func (c *DBConfig) Host() string {

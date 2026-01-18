@@ -6,7 +6,7 @@ import (
 
 type Config struct {
 	HTTPServerConfig *HTTPServerConfig `env:",init"`
-	DBConfig         *DBConfig         `env:",init" envPrefix:"DB_"`
+	DBConfig         *DBConfig         `env:",init"`
 }
 
 func LoadConfig() (*Config, error) {
