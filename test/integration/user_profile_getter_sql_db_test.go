@@ -10,6 +10,7 @@ import (
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/testx"
+	"github.com/dyxj/bigbackend/test"
 	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/stretchr/testify/assert"
 )
@@ -25,7 +26,7 @@ func TestSQL_GetUserProfileByUserID(t *testing.T) {
 		ctx := t.Context()
 
 		t.Cleanup(func() {
-			truncateUserProfile(dbConn)
+			test.TruncateUserProfile(dbConn)
 		})
 
 		creator := profile.NewCreatorSQLDB(logger)
@@ -58,7 +59,7 @@ func TestSQL_GetUserProfileByUserID(t *testing.T) {
 		ctx := t.Context()
 
 		t.Cleanup(func() {
-			truncateUserProfile(dbConn)
+			test.TruncateUserProfile(dbConn)
 		})
 
 		getter := profile.NewGetterSQLDB(logger, dbConn)

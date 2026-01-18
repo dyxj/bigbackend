@@ -16,6 +16,7 @@ import (
 	"github.com/dyxj/bigbackend/pkg/errorx"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/testx"
+	"github.com/dyxj/bigbackend/test"
 	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/go-jet/jet/v2/postgres"
 	"github.com/stretchr/testify/assert"
@@ -30,7 +31,7 @@ func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
 
 	t.Run("should insert successfully", func(t *testing.T) {
 		t.Cleanup(func() {
-			truncateUserProfile(dbConn)
+			test.TruncateUserProfile(dbConn)
 		})
 
 		creator := profile.NewCreatorSQLDB(logger)
@@ -88,7 +89,7 @@ func TestCreatorSQLDB_InsertUserProfile(t *testing.T) {
 
 	t.Run("should fail to insert with duplicate userId", func(t *testing.T) {
 		t.Cleanup(func() {
-			truncateUserProfile(dbConn)
+			test.TruncateUserProfile(dbConn)
 		})
 
 		creator := profile.NewCreatorSQLDB(logger)

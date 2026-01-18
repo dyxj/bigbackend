@@ -14,6 +14,7 @@ import (
 	"github.com/dyxj/bigbackend/internal/user/invitation"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/testx"
+	"github.com/dyxj/bigbackend/test"
 	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/go-jet/jet/v2/postgres"
 	"github.com/stretchr/testify/assert"
@@ -26,7 +27,7 @@ func TestCreatorSQLDBUserInvitation_InsertUserInvitation(t *testing.T) {
 
 	t.Run("should insert successfully", func(t *testing.T) {
 		t.Cleanup(func() {
-			truncateUserInvitation(dbConn)
+			test.TruncateUserInvitation(dbConn)
 		})
 
 		creator := invitation.NewCreatorSQLDB(logger)

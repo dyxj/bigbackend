@@ -11,6 +11,7 @@ import (
 	"github.com/dyxj/bigbackend/internal/user/profile"
 	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/testx"
+	"github.com/dyxj/bigbackend/test"
 	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -21,7 +22,7 @@ func TestUserProfileGetterHandler_Got(t *testing.T) {
 
 	dbConn := testx.GlobalEnv().DBConn()
 	t.Cleanup(func() {
-		truncateUserProfile(dbConn)
+		test.TruncateUserProfile(dbConn)
 	})
 
 	ctx := t.Context()
@@ -75,7 +76,7 @@ func TestUserProfileGetterHandler_NotFound(t *testing.T) {
 
 	dbConn := testx.GlobalEnv().DBConn()
 	t.Cleanup(func() {
-		truncateUserProfile(dbConn)
+		test.TruncateUserProfile(dbConn)
 	})
 
 	notFoundUserId := uuid.New()
@@ -117,7 +118,7 @@ func TestUserProfileGetterHandler_InvalidUserId(t *testing.T) {
 
 	dbConn := testx.GlobalEnv().DBConn()
 	t.Cleanup(func() {
-		truncateUserProfile(dbConn)
+		test.TruncateUserProfile(dbConn)
 	})
 
 	request, err := http.NewRequest(

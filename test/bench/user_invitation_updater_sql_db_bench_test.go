@@ -1,4 +1,6 @@
-package integration
+//go:build integration
+
+package bench
 
 import (
 	"context"
@@ -10,6 +12,7 @@ import (
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/sqldb"
 	"github.com/dyxj/bigbackend/pkg/testx"
+	"github.com/dyxj/bigbackend/test"
 	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/stretchr/testify/assert"
 )
@@ -41,7 +44,7 @@ func BenchmarkUpdaterSQLDBUserInvitation_Multiple(b *testing.B) {
 	if err != nil {
 		b.Fatalf("failed to initialize logger: %v", err)
 	}
-	dbConn := testx.GlobalEnv().DBConn()
+	dbConn := testx.GlobalBenchEnv().DBConn()
 	creator := invitation.NewCreatorSQLDB(logger)
 	updater := invitation.NewUpdaterSQLDB(logger)
 	ctx := b.Context()
@@ -61,7 +64,7 @@ func BenchmarkUpdaterSQLDBUserInvitation_Multiple(b *testing.B) {
 			}
 
 			b.Cleanup(func() {
-				truncateUserInvitation(dbConn)
+				test.TruncateUserInvitation(dbConn)
 			})
 
 			// Reset timer to exclude setup time
@@ -89,7 +92,7 @@ func BenchmarkUpdaterSQLDBUserInvitation_Multiple(b *testing.B) {
 			}
 
 			b.Cleanup(func() {
-				truncateUserInvitation(dbConn)
+				test.TruncateUserInvitation(dbConn)
 			})
 
 			// Reset timer to exclude setup time

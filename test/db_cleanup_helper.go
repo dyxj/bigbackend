@@ -1,15 +1,15 @@
-package integration
+package test
 
 import (
 	"database/sql"
 	"log"
 )
 
-func truncateUserProfile(dbConn *sql.DB) {
+func TruncateUserProfile(dbConn *sql.DB) {
 	truncateTable(dbConn, "user_profile")
 }
 
-func truncateUserInvitation(dbConn *sql.DB) {
+func TruncateUserInvitation(dbConn *sql.DB) {
 	truncateTable(dbConn, "user_invitation")
 }
 

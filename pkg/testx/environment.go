@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/docker/docker/api/types/container"
 	"github.com/dyxj/bigbackend/internal/app"
 	"github.com/dyxj/bigbackend/internal/config"
 	"github.com/dyxj/bigbackend/pkg/logx"
@@ -24,8 +25,9 @@ import (
 // Environment represents a test environment with optional database and server components.
 // In the event there is a need to run integration test in parallel there is an option to spin up multiple environments
 type Environment struct {
-	name         string
-	enableServer bool
+	name          string
+	enableServer  bool
+	isFixResource bool
 
 	dbContainer *postgres.PostgresContainer
 	dbConn      *sql.DB
@@ -43,15 +45,16 @@ type Environment struct {
 	logger *log.Logger
 }
 
-func NewEnvironment(name string, enableServer bool) *Environment {
+func NewEnvironment(name string, enableServer bool, isFixResource bool) *Environment {
 	return &Environment{
-		name:         name,
-		enableServer: enableServer,
-		ready:        make(chan struct{}),
-		errorChan:    make(chan error),
-		close:        make(chan struct{}),
-		cleanupDone:  make(chan struct{}),
-		logger:       log.New(os.Stderr, fmt.Sprintf("test-env-%s ", name), log.LstdFlags),
+		name:          name,
+		enableServer:  enableServer,
+		isFixResource: isFixResource,
+		ready:         make(chan struct{}),
+		errorChan:     make(chan error),
+		close:         make(chan struct{}),
+		cleanupDone:   make(chan struct{}),
+		logger:        log.New(os.Stderr, fmt.Sprintf("test-env-%s ", name), log.LstdFlags),
 	}
 }
 
@@ -130,15 +133,34 @@ func (e *Environment) setupDBContainer() error {
 	dbUser := "user"
 	dbPassword := "password"
 
-	pgContainer, err := postgres.Run(ctx,
-		"postgres:16-alpine",
+	opts := []testcontainers.ContainerCustomizer{
 		postgres.WithDatabase(dbName),
 		postgres.WithUsername(dbUser),
 		postgres.WithPassword(dbPassword),
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
-				WithStartupTimeout(5*time.Second)),
+				WithStartupTimeout(5 * time.Second),
+		),
+	}
+	if e.isFixResource {
+		opts = append(opts, testcontainers.WithHostConfigModifier(
+			func(hc *container.HostConfig) {
+				// Limit to 2 CPU core to ensure consistency
+				// Note: Performance varies based on CPU model
+				hc.CPUPeriod = 100000
+				hc.CPUQuota = 200000
+
+				// Limit memory to 1GB
+				hc.Memory = 1 * 1024 * 1024 * 1024     // 1GB
+				hc.MemorySwap = 1 * 1024 * 1024 * 1024 // Disable swap by setting it equal to memory
+			},
+		))
+	}
+
+	pgContainer, err := postgres.Run(ctx,
+		"postgres:16-alpine",
+		opts...,
 	)
 	if err != nil {
 		return err

@@ -9,6 +9,7 @@ import (
 	"github.com/dyxj/bigbackend/internal/user/invitation"
 	"github.com/dyxj/bigbackend/pkg/logx"
 	"github.com/dyxj/bigbackend/pkg/testx"
+	"github.com/dyxj/bigbackend/test"
 	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +24,7 @@ func TestGetterSQLDBUserInvitation_InsertUserInvitation(t *testing.T) {
 	t.Run("should list invitations successfully", func(t *testing.T) {
 		ctx := t.Context()
 		t.Cleanup(func() {
-			truncateUserInvitation(dbConn)
+			test.TruncateUserInvitation(dbConn)
 		})
 
 		getter := invitation.NewGetterSQLDB(logger, dbConn)
@@ -53,7 +54,7 @@ func TestGetterSQLDBUserInvitation_InsertUserInvitation(t *testing.T) {
 	t.Run("should list no invitations", func(t *testing.T) {
 		ctx := t.Context()
 		t.Cleanup(func() {
-			truncateUserInvitation(dbConn)
+			test.TruncateUserInvitation(dbConn)
 		})
 
 		getter := invitation.NewGetterSQLDB(logger, dbConn)

@@ -16,6 +16,7 @@ import (
 	"github.com/dyxj/bigbackend/internal/user/profile"
 	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/testx"
+	"github.com/dyxj/bigbackend/test"
 	"github.com/dyxj/bigbackend/test/faker"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -26,7 +27,7 @@ func TestUserProfileCreatorHandler_ShouldCreate(t *testing.T) {
 
 	dbConn := testx.GlobalEnv().DBConn()
 	t.Cleanup(func() {
-		truncateUserProfile(dbConn)
+		test.TruncateUserProfile(dbConn)
 	})
 
 	payload := faker.UserProfileCreateRequest()
@@ -79,7 +80,7 @@ func TestUserProfileCreatorHandler_PayloadValidationError(t *testing.T) {
 
 	dbConn := testx.GlobalEnv().DBConn()
 	t.Cleanup(func() {
-		truncateUserProfile(dbConn)
+		test.TruncateUserProfile(dbConn)
 	})
 
 	ttc := []struct {
@@ -187,7 +188,7 @@ func TestUserProfileCreatorHandler_InvalidJsonError(t *testing.T) {
 
 	dbConn := testx.GlobalEnv().DBConn()
 	t.Cleanup(func() {
-		truncateUserProfile(dbConn)
+		test.TruncateUserProfile(dbConn)
 	})
 
 	ttc := []struct {
@@ -258,7 +259,7 @@ func TestUserProfileCreatorHandler_URL_ID_payload_ID_mismatch(t *testing.T) {
 
 	dbConn := testx.GlobalEnv().DBConn()
 	t.Cleanup(func() {
-		truncateUserProfile(dbConn)
+		test.TruncateUserProfile(dbConn)
 	})
 
 	payload := faker.UserProfileCreateRequest()
@@ -304,7 +305,7 @@ func TestUserProfileCreatorHandler_Unique_Violation(t *testing.T) {
 
 	dbConn := testx.GlobalEnv().DBConn()
 	t.Cleanup(func() {
-		truncateUserProfile(dbConn)
+		test.TruncateUserProfile(dbConn)
 	})
 
 	payload := faker.UserProfileCreateRequest()
