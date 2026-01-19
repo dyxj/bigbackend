@@ -33,6 +33,7 @@ type Server struct {
 
 	errSig  chan struct{}
 	stopSig chan struct{}
+	runDone chan struct{}
 	done    chan struct{}
 }
 
@@ -49,6 +50,7 @@ func NewServer(
 		metrics:    metrics,
 		errSig:     make(chan struct{}),
 		stopSig:    make(chan struct{}),
+		runDone:    make(chan struct{}),
 		done:       make(chan struct{}),
 	}
 }
@@ -83,7 +85,7 @@ func (s *Server) Run() <-chan struct{} {
 			s.errSig <- struct{}{}
 		}
 		s.logger.Info("httpServer closed")
-		// TODO do we need a done channel here? Is shutdown a blocking call
+		close(s.runDone)
 	}()
 
 	go s.listenForStopAndOrchestrateShutdown()
@@ -109,6 +111,7 @@ func (s *Server) listenForStopAndOrchestrateShutdown() {
 	err := s.shutDown(shutDownCtx)
 	s.stopOngoingGracefully()
 	if err != nil {
+		// In the event of force shutdown we do not wait for runDone.
 		s.logger.Error("failed to wait for ongoing requests to finish, waiting for forced cancellation", zap.Error(err))
 		time.Sleep(s.httpConfig.ShutDownHardTimeout())
 		s.logger.Error("httpServer shut down ungracefully")
@@ -117,6 +120,7 @@ func (s *Server) listenForStopAndOrchestrateShutdown() {
 	}
 
 	s.logger.Info("httpServer shut down gracefully")
+	<-s.runDone
 	close(s.done)
 }
 
