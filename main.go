@@ -12,7 +12,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/dyxj/bigbackend/internal/app"
 	"github.com/dyxj/bigbackend/internal/config"
@@ -30,12 +29,6 @@ func init() {
 		log.Panicf("failed to set GOMAXPROCS: %v", err)
 	}
 }
-
-const (
-	_shutdownPeriod      = 15 * time.Second
-	_shutdownHardPeriod  = 3 * time.Second
-	_readinessDrainDelay = 5 * time.Second
-)
 
 func main() {
 	// listen to interrupt and termination signals
@@ -87,6 +80,7 @@ func main() {
 		logger,
 		dbConn,
 		cfg.HTTPServerConfig,
+		nil,
 	)
 
 	errSig := server.Run()

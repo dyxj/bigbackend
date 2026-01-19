@@ -10,6 +10,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/dyxj/bigbackend/pkg/monitoring"
 	"go.uber.org/zap"
 )
 
@@ -21,6 +22,9 @@ type Server struct {
 	httpConfig HttpConfig
 
 	httpServer *http.Server
+
+	// metrics enabled if not nil
+	metrics *monitoring.Metrics
 
 	onGoingCtx            context.Context
 	stopOngoingGracefully context.CancelFunc
@@ -36,11 +40,13 @@ func NewServer(
 	logger *zap.Logger,
 	dbConn *sql.DB,
 	httpConfig HttpConfig,
+	metrics *monitoring.Metrics,
 ) *Server {
 	return &Server{
 		logger:     logger,
 		dbConn:     dbConn,
 		httpConfig: httpConfig,
+		metrics:    metrics,
 		errSig:     make(chan struct{}),
 		stopSig:    make(chan struct{}),
 		done:       make(chan struct{}),
@@ -77,6 +83,7 @@ func (s *Server) Run() <-chan struct{} {
 			s.errSig <- struct{}{}
 		}
 		s.logger.Info("httpServer closed")
+		// TODO do we need a done channel here? Is shutdown a blocking call
 	}()
 
 	go s.listenForStopAndOrchestrateShutdown()

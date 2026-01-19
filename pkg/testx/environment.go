@@ -248,7 +248,8 @@ func (e *Environment) setupHttpTestServer() error {
 		return fmt.Errorf("failed to init logger: %w", err)
 	}
 
-	srv := app.NewServer(logger, e.dbConn, cfg.HTTPServerConfig)
+	// Pass nil for metrics in test environment (monitoring not needed for tests)
+	srv := app.NewServer(logger, e.dbConn, cfg.HTTPServerConfig, nil)
 
 	e.httptestServer = httptest.NewServer(srv.BuildRouter())
 	return nil

@@ -7,12 +7,27 @@ import (
 
 	"github.com/dyxj/bigbackend/pkg/httpx"
 	"github.com/dyxj/bigbackend/pkg/idempotency"
+	"github.com/dyxj/bigbackend/pkg/monitoring"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
 func (s *Server) BuildRouter() http.Handler {
 	router := chi.NewRouter()
+
+	router.Use(middleware.Logger)
+
+	if s.metrics != nil {
+		router.Use(s.metrics.HTTPMetricsMiddleware)
+	}
+
+	router.Get("/healthz", monitoring.HealthCheckHandler(func() bool {
+		return s.isShuttingDown.Load()
+	}))
+	router.Get("/readyz", monitoring.ReadinessCheckHandler(
+		func() bool { return s.isShuttingDown.Load() },
+		s.dbConn.Ping,
+	))
 
 	idemStore := idempotency.NewMemStore(idempotency.DefaultLockConfig)
 	idemMiddleware := idempotency.NewMiddleware(s.logger, idemStore,
@@ -24,21 +39,17 @@ func (s *Server) BuildRouter() http.Handler {
 		idempotency.WithErrorResponseWriter(s.idempotencyErrResponseWriter),
 	)
 
+	apiRouter := chi.NewRouter()
+
+	apiRouter.Use(s.TimeoutHandler)
+	apiRouter.Use(idemMiddleware.Handler)
+	apiRouter.Use(middleware.Recoverer)
+
 	userProfileCreatorHandler, userProfileGetterHandler := s.buildUserProfileHandlers()
+	apiRouter.Get("/user/{id}/profile", userProfileGetterHandler.ServeHTTP)
+	apiRouter.Post("/user/{id}/profile", userProfileCreatorHandler.ServeHTTP)
 
-	router.Use(middleware.Logger)
-	router.Get("/healthz", s.healthCheck)
-
-	domainRouter := chi.NewRouter()
-
-	domainRouter.Use(s.TimeoutHandler)
-	domainRouter.Use(idemMiddleware.Handler)
-	domainRouter.Use(middleware.Recoverer)
-
-	domainRouter.Get("/user/{id}/profile", userProfileGetterHandler.ServeHTTP)
-	domainRouter.Post("/user/{id}/profile", userProfileCreatorHandler.ServeHTTP)
-
-	router.Mount("/", domainRouter)
+	router.Mount("/api/v1", apiRouter)
 
 	return router
 }
