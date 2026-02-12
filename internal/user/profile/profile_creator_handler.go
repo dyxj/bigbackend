@@ -34,6 +34,7 @@ func NewCreatorHandler(
 }
 
 func (c *CreatorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	defer func() { _ = r.Body.Close() }()
 	var cRequest CreateRequest
 	err := json.NewDecoder(r.Body).Decode(&cRequest)
 	if err != nil {
